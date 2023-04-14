@@ -1,0 +1,27 @@
+.Footer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    z-index: -1;
+}
+
+.Footer a {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #333;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.Footer a:hover {
+    /* color: #5C86FF; */
+    color: #FBC56C;
+}
+
+.Footer p {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #333;
+}

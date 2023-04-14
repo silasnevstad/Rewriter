@@ -1,0 +1,69 @@
+.Output {
+    display: flex;
+    flex-direction: column;
+}
+
+.Output-row {
+    display: flex;
+    flex-direction: row;
+    /* align-items: center; */
+    /* justify-content: space-between; */
+    width: 100%;
+    margin-bottom: 2rem;
+}
+
+.Output-row-left {
+    width: 100%;
+}
+
+.Output-container {
+    padding: 2rem 5rem;
+    padding-bottom: 0rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.Output-scroll {
+    margin-bottom: 3rem;
+}
+
+.Output-notice p {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #333;
+    /* margin-bottom: 0rem; */
+}
+
+.Output-scroll p {
+    font-size: 3rem;
+    font-weight: 500;
+    color: #333;
+    margin-top: -.8rem;
+    /* margin-bottom: -2rem; */
+}
+
+@media (max-width: 1200px) {
+    .Output {
+        flex-direction: column;
+    }
+
+    .Output-scroll {
+        margin-bottom: 0rem;
+    }
+    
+    .Output-container {
+        padding: 0rem 3rem;
+    }
+
+    .Output-row {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        margin-bottom: 2rem;
+    }
+    
+    .Output-row-left {
+        width: 100%;
+    }
+    
+}

@@ -1,0 +1,27 @@
+.OutputSentences {
+    display: flex;
+    flex-direction: column;
+    margin-top: 3rem;
+}
+
+.OutputSentences h3 {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.OutputSentences-bold-text {
+    font-weight: 600;
+    font-size: 1.3rem;
+    text-shadow: 0 0 0.1em #00000020;
+    color: #999;
+    font-style: italic;
+}
+
+.OutputSentences-bold-score {
+    font-weight: 600;
+    font-size: 1.4rem;
+    text-shadow: 0 0 0.1em #00000020;
+    color: #5C86FF;
+}
