@@ -104,6 +104,7 @@ function Api({ text, setLoading, setError, setOutput, setAskOutput, setZeroScore
 
     // takes in text to rewrite and returns openAI response.
     const humanizeText = async (scoreData) => {
+        console.log('Humanizing Text...')
         let percent = await getScore(scoreData);
         let perplexities = await getSentencePerplexities(scoreData);
         let rewrittenText = createPerplexityPrompt(perplexities);
@@ -155,14 +156,18 @@ function Api({ text, setLoading, setError, setOutput, setAskOutput, setZeroScore
             setLoading(true);
 
             try {
-                const data = await checkGPTZero(text);
+                let data = await checkGPTZero(text);
                 setOriginalScore(data);
                 setOriginalText(text);
 
-                let newMessages = [{role: 'user', content: text}];
-                const response = await askGPT(newMessages, "gpt-3.5-turbo");
+                const response = await askGPT([{role: 'user', content: text}], "gpt-3.5-turbo");
+                let messageText = response.data.choices[0].message.content;
+                data = await checkGPTZero(messageText);
+                if (getScore(data) > 5) {
+                    messageText = await humanizeText(data);
+                }
                 setError(false);
-                setAskOutput(response.data.choices[0].message.content);
+                setOutput(messageText);
             } catch (error) {
                 console.log(error);
                 setError(true);
