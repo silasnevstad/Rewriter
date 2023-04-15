@@ -1,7 +1,7 @@
 .NoticeMessage {
 
     /* width: 100%; */
-    margin-top: -1rem;
+    margin-top: -4rem;
     height: 0em;
     background-color: #fff;
     padding: 0rem 2rem;
@@ -10,7 +10,13 @@
 .NoticeMessage-content-text {
     font-size: 1.3rem;
     font-weight: 500;
-    color: #333;
+    color: #444;
     margin-bottom: 0rem;
     padding: 0rem 2rem;
+}
+
+@media (max-width: 1200px) {
+    .NoticeMessage {
+        margin-top: 0rem;
+    }
 }

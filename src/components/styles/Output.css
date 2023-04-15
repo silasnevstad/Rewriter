@@ -31,6 +31,7 @@
     font-size: 1.5rem;
     font-weight: 500;
     color: #333;
+    margin-top: -.1rem;
     /* margin-bottom: 0rem; */
 }
 
@@ -38,7 +39,7 @@
     font-size: 3rem;
     font-weight: 500;
     color: #333;
-    margin-top: -.8rem;
+    margin-top: -1rem;
     /* margin-bottom: -2rem; */
 }
 

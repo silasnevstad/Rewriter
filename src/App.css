@@ -1,7 +1,7 @@
 .App {
   text-align: center;
   background-color: #fff;
-  /* min-height: 100vh; */
+  min-height: 100vh;
   /* min-width: 100vw; */
 }
 
@@ -33,4 +33,22 @@ header {
 .App-footer {
   margin-top: 7rem;
   width: 100%;
+}
+
+@media (max-width: 1200px) {
+  .App {
+    background-color: #fff;
+  }
+
+  .App-footer {
+    margin-top: 8rem;
+  }
+
+  .App-main {
+    gap: 2rem;
+  }
+
+  header {
+    min-height: 10vh;
+  }
 }

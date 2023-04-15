@@ -40,13 +40,14 @@ function Input({ text, setText, handleButtonClick, handleAskButtonClick, loading
                     <p> {getWordCount(text)} {getWordCountString(text)} </p>
                 </div>
             </div>
-            <button onClick={handleAskButtonClick} disabled={loading} className="Input-button-blue">
-                Ask
-            </button>
-            <button onClick={handleClick} disabled={loading} className="Input-button-blue">
-                Rewrite
-            </button>
-
+            <div className="Input-button-container">
+                <button onClick={handleAskButtonClick} disabled={loading} className="Input-button-blue">
+                    Ask
+                </button>
+                <button onClick={handleClick} disabled={loading} className="Input-button-blue">
+                    Rewrite
+                </button>
+            </div>
         </div>
     );
 }

@@ -132,6 +132,7 @@ function Api({ text, setLoading, setError, setOutput, setAskOutput, setZeroScore
             try {
                 let data = await checkGPTZero(text);
                 let score = await getScore(data);
+                console.log('original score:', data)
                 setOriginalScore(data);
                 setOriginalText(text);
 

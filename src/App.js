@@ -60,7 +60,7 @@ function App() {
           />
 
           {error && <ErrorMessage onClose={() => setError(false)} />}
-          {!error && !output && !askOutput && <NoticeMessage />}
+          {/* {!error && !output && !askOutput && <NoticeMessage />} */}
           {/* {!error && output && <Summary text={output} />} */}
           {!error && output && zeroScore && <Ouput output={output} score={zeroScore} originalScore={originalScore} originalText={originalText} />}
           {!error && askOutput && <AskOutput output={askOutput} score={zeroScore} originalScore={originalScore} originalText={originalText} />}
