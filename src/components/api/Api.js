@@ -37,7 +37,8 @@ function Api({ text, setLoading, setError, setOutput, setAskOutput, setZeroScore
     const openaiApiKey = process.env.REACT_APP_OPENAI_API_KEY;
     const gptZeroApiKey = process.env.REACT_APP_GPT_ZERO_API_KEY;
     
-    // console.log('openKey:', OPENAI_API_KEY);
+    console.log('openaiApiKey:', openaiApiKey);
+    console.log('gptZeroApiKey:', gptZeroApiKey);
     const configuration = new Configuration({ apiKey: openaiApiKey });
     const openai = new OpenAIApi(configuration);
 
@@ -47,8 +48,6 @@ function Api({ text, setLoading, setError, setOutput, setAskOutput, setZeroScore
         {'role': 'user', 'content': 'This text gets detected as AI-generated content: Bitcoin is a decentralized digital currency built on blockchain technology that operates without a central bank or administrator. It offers advantages such as low transaction fees, fast processing times, and global accessibility. However, it has faced challenges such as volatility, regulatory scrutiny, and security concerns. \n\n Despite these challenges, Bitcoin remains a popular and innovative digital currency that has the potential to revolutionize the way we think about money and financial transactions. Its value has fluctuated greatly since its creation in 2009, but it has steadily gained popularity and is now one of the most widely used cryptocurrencies in the world. The legality and regulation of Bitcoin varies widely between countries, with some embracing it as a legitimate form of payment while others restrict its use. Nevertheless, Bitcoin is an exciting development in the world of finance and technology that is worth keeping an eye on.'},
         {'role': 'user', 'content': 'I will provide you some text and a percentage score of how likely it is to be AI generated. Use this percentage to determine how much you need to rewrite the text. The higher the percentage the more you need to rewrite. The lower the percentage the less you need to rewrite. So if you get a score of 50% you need to rewrite 50% of the text. If you get a score of 90% you need to rewrite 90% of the text. If you get a score of 10% you need to rewrite 10% of the text. \n'},
     ];
-
-
 
     const checkGPTZero = async (input) => {
         const url = 'https://api.gptzero.me/v2/predict/text';
@@ -167,7 +166,7 @@ function Api({ text, setLoading, setError, setOutput, setAskOutput, setZeroScore
                     messageText = await humanizeText(data);
                 }
                 setError(false);
-                setOutput(messageText);
+                setAskOutput(messageText);
             } catch (error) {
                 console.log(error);
                 setError(true);
