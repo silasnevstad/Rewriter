@@ -1,0 +1,14 @@
+.ErrorMessage {
+    color: #333;
+    font-size: 1.5rem;
+    font-weight: 500;
+    max-width: 30rem;
+    margin-top: -3rem;
+}
+
+.ErrorMessage p {
+    color: #333;
+    font-size: 1.5rem;
+    font-weight: 500;
+    max-width: 30rem;
+}

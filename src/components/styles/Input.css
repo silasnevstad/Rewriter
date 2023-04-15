@@ -31,6 +31,14 @@
 .input-wrapper div.input:focus {
     outline-color: #5c86ff;
 }
+
+.input-word-count {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #555;
+    margin-top: -3rem;
+    text-align: right;
+}
   
 .placeholder {
     color: #4967c4;

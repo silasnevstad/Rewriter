@@ -1,8 +1,8 @@
 .App {
   text-align: center;
   background-color: #fff;
-  min-height: 100vh;
-  min-width: 100vw;
+  /* min-height: 100vh; */
+  /* min-width: 100vw; */
 }
 
 .modal-open {
@@ -31,6 +31,6 @@ header {
 }
 
 .App-footer {
-  margin-top: 11rem;
+  margin-top: 10rem;
   width: 100%;
 }

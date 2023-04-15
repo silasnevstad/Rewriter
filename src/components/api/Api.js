@@ -2,12 +2,14 @@ import { useState } from 'react';
 import axios from 'axios';
 const { Configuration, OpenAIApi } = require("openai");
 
-function Api({ text, setLoading, setError, setOutput, zeroScore, setZeroScore, setOriginalScore, setOriginalText }) {
-    const API_KEY = "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";
-    const configuration = new Configuration({ apiKey: API_KEY });
+function Api({ text, setLoading, setError, setOutput, setAskOutput, setZeroScore, setOriginalScore, setOriginalText }) {
+    const openaiApiKey = process.env.REACT_APP_OPENAI_API_KEY;
+    const gptZeroApiKey = process.env.REACT_APP_GPT_ZERO_API_KEY;
+    
+    // console.log('openKey:', OPENAI_API_KEY);
+    const configuration = new Configuration({ apiKey: openaiApiKey });
     const openai = new OpenAIApi(configuration);
-    const [original, setOriginal] = useState(true); // true = has not been rewritten, false = has been rewritten
-    const [loadingGPTZero, setLoadingGPTZero] = useState(true);
+
     const [messages , setMessages] = useState([
         {'role': 'user', 'content': 'I need you to rewrite some text. There are two factors that are important when detecting content as AI or human generated, perplexity and burstiness. Perplexity measures the randomness of the text, words and sentence lengths, and burstiness measures the variation in perplexity. As some examples, I will give you two peices of text one is detected as human generated and one if detected as AI generated, anaylze these to better help you rewrite the text to be human-generated. \n'},
         {'role': 'user', 'content': 'This text gets detected as human-generated content: Bitcoin emerged in 2009 as a decentralized digital currency created by the enigmatic Satoshi Nakamoto. It operates on a peer-to-peer network, removing the need for banks and financial institutions. Using blockchain technology, Bitcoin transactions are secure and transparent. This novel approach to transferring value has gained significant attention and adoption. \n\n However, Bitcoin has faced challenges and controversies. Critics argue its decentralized nature can enable illicit activities and its mining process raises environmental concerns. Nonetheless, Bitcoin\'s unique features make it an attractive alternative to traditional currencies in certain situations. As a result, Bitcoin continues to shape the global conversation around the future of finance.'},
@@ -34,7 +36,7 @@ function Api({ text, setLoading, setError, setOutput, zeroScore, setZeroScore, s
         }
         const headers = {
             'accept': 'application/json',
-            'X-Api-Key': 'abe51e5183134e6bbc31a8257ac4559d',
+            'X-Api-Key': gptZeroApiKey,
             'Content-Type': 'application/json'
         }
     
@@ -45,7 +47,6 @@ function Api({ text, setLoading, setError, setOutput, zeroScore, setZeroScore, s
                     headers: headers
                 });
                 setZeroScore(response.data.documents[0]);
-                setLoadingGPTZero(false);
                 console.log('GPTZero Response:', response.data);
                 resolve(response.data.documents[0]);
             } catch (error) {
@@ -65,40 +66,93 @@ function Api({ text, setLoading, setError, setOutput, zeroScore, setZeroScore, s
 
         return prompt;
     }
+
+    // asks GPT-4 for a response given messages array
+    const askGPT = async (messages, model) => {
+        let response;
+        try {
+            console.log('Prompting GPT-4...')
+            // get response from openAI
+            response = await openai.createChatCompletion({
+                model: model,
+                messages: messages,
+            });
+            console.log('GPT-4 Response:', response.data)
+        } catch (error) {
+            console.log(error);
+        }
+
+        return new Promise((resolve, reject) => {
+            if (response) {
+                resolve(response);
+            } else {
+                reject('Error');
+            }
+        });
+    }
+
+    // takes in text to rewrite and returns openAI response.
+    const rewriteTextFromPrompt = async (prompt) => {
+        let newMessages = messages.concat({'role': 'user', 'content': prompt});
+        let response = await askGPT(newMessages, "gpt-4");
+        console.log('rewriteText Text:', response.data.choices[0].message.content);
+        return response;
+    }
+    
+    const cleanResponseString = (response) => {
+        let cleanResponse = response.replace(/\[Perplexity: \d+\]/g, '');
+
+        // remove any extra spaces before periods
+        cleanResponse = cleanResponse.replace(/ +\./g, '.');
+
+        return cleanResponse;
+    }
+
+    // takes in text to rewrite and returns openAI response.
+    const humanizeText = async (scoreData) => {
+        let percent = await getScore(scoreData);
+        let perplexities = await getSentencePerplexities(scoreData);
+        let rewrittenText = createPerplexityPrompt(perplexities);
+        let prompt = `Rewrite the following text. Focus on two factors: perplexity and burstiness. The goal is to increase the perplexity and burstiness as needed, meaning be careful not to over do it so ensure it remains readable, a key is varying sentence lengths. Again make sure to heavily avoid obscure words or convoluted sentence structures Here is the percentage: ${percent}%. I will also provide you the perplexity of each sentence to better help you adjust the text. AI tend to write with low perplexity so focus on the sentences with the lowest perplexities the most and obviously don't write the perplexities in your response only the sentences. Here is the text with the perplexities after each sentence: ${rewrittenText}`;
+
+        let response = await rewriteTextFromPrompt(prompt);
+
+        let cleanResponse = cleanResponseString(response.text);
+
+        // return clean response
+        return cleanResponse;
+    }
+
+
     const processAPI = async () => {
         if (text !== "") {
             console.log("Running API....");
-            setOriginalText(text);
             setLoading(true);
         
             // get the score of the original text and wait for it to finish
-            let data = await checkGPTZero(text);
+            let data;
+            try {
+                data = await checkGPTZero(text);
+            } catch (error) {
+                console.log(error);
+                setError(true);
+                setLoading(false);
+                return;
+            }
             let percent = await getScore(data);
             let perplexities = await getSentencePerplexities(data);
             setOriginalScore(data);
-            console.log("percent", perplexities);
+            setOriginalText(text);
         
-            let prompt;
             let rewrittenText = createPerplexityPrompt(perplexities);
-            console.log("rewrittenText: ", rewrittenText)
         
-            while (percent >= 10) {
-                prompt = `Rewrite the following text. Focus on two factors: perplexity and burstiness. The goal is to increase the perplexity and burstiness as needed, meaning be careful not to over do it so ensure it remains readable, a key is varying sentence lengths. Again make sure to heavily avoid obscure words or convoluted sentence structures Here is the percentage: ${percent}%. I will also provide you the perplexity of each sentence to better help you adjust the text. AI tend to write with low perplexity so focus on the sentences with the lowest perplexities the most and obviously don't write the perplexities in your response only the sentences. Here is the text with the perplexities after each sentence: ${rewrittenText}`;
-        
-                console.log("prompt: ", prompt);
-                let response;
-                try {
-                    response = await openai.createChatCompletion({
-                        model: "gpt-4",
-                        messages: messages.concat({ role: "user", content: prompt }),
-                    });
-                    console.log("response: ", response);
-                } catch (error) {
-                    console.error("Error:", error);
-                    setError(true);
-                    break;
-                }
-        
+            while (percent >= 5) {
+                let prompt = `Rewrite the following text. Focus on two factors: perplexity and burstiness. The goal is to increase the perplexity and burstiness as needed, meaning be careful not to over do it so ensure it remains readable, a key is varying sentence lengths. Again make sure to heavily avoid obscure words or convoluted sentence structures Here is the percentage: ${percent}%. I will also provide you the perplexity of each sentence to better help you adjust the text. AI tend to write with low perplexity so focus on the sentences with the lowest perplexities the most and obviously don't write the perplexities in your response only the sentences. Here is the text with the perplexities after each sentence: ${rewrittenText}`;
+
+                // use rewriteText function to get the response from openAI
+                let response = await rewriteTextFromPrompt(prompt);
+                console.log("response: ", response);
+    
                 if (response.data.error) {
                     setError(true);
                     break;
@@ -110,39 +164,50 @@ function Api({ text, setLoading, setError, setOutput, zeroScore, setZeroScore, s
                     console.log("New percent:", percent);
                 }
             }
-            
-            // if the response contains the [Perplexity: N] string then remove any occurences of it so remove [Perplexity: and the number after it and the closing square bracket
-            if (rewrittenText.includes('[Perplexity:')) {
-                rewrittenText = rewrittenText.replace(/\[Perplexity: \d+\]/g, ''); // this remove digits of one or more length
-                // remove the space before the full stop
-                rewrittenText = rewrittenText.replace(/ \./g, '.');
-            }
-    
+
+            // if the response contains the [Perplexity: N] string then remove any occurences of it
+            rewrittenText = cleanResponseString(rewrittenText);
 
             setOutput(rewrittenText);
             setLoading(false);
-            setOriginal(true);
         }
-      };
-      
+    };
 
-    // const rewriteText = async (inputText, originalScore) => {
-    //     if (originalScore === undefined) {
-    //         let data = await checkGPTZero(inputText);
-    //         let score = await getScore(data);
-    //         setOriginalScore(score);
-    //         originalScore = score;
-    //         await processAPI(inputText, score);
-    //     } else {
-    //         await processAPI(inputText, originalScore);
-    //     }
+    const askAPI = async () => {
+        if (text !== "") {
+            console.log("Asking question to API....");
+            setLoading(true);
 
-    //     if (zeroScore.completely_generated_prob * 100 >= 10) {
-    //         await rewriteText(output, originalScore);
-    //     }
-    // };
+            let data;
+            try {
+                data = await checkGPTZero(text);
+                setOriginalScore(data);
+            } catch (error) {
+                console.log(error);
+                // setError(true);
+                // setLoading(false);
+                // return;
+            }
+            setOriginalText(text);
 
-    return { processAPI };
+            let newMessages = [{role: 'user', content: text}];
+            let response;
+
+            try {
+                response = await askGPT(newMessages, "gpt-3.5-turbo");
+                setError(false);
+                setAskOutput(response.data.choices[0].message.content);
+                setLoading(false);
+            } catch (error) {
+                console.log(error);
+                setError(true);
+                setLoading(false);
+                return;
+            }
+        }
+    };
+
+    return { processAPI, askAPI };
 }
 
 export default Api;
