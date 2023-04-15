@@ -85,3 +85,53 @@
     color: #fff;
     transform: translateY(-7px);
 }
+
+@media (max-width: 1200px) {
+    .Input {
+        flex-direction: column;
+    }
+    
+    .Input .input {
+        width: 80vw;
+        height: 40vh;
+        padding: 1rem;
+        border: 1px solid #bbb;
+        border-radius: 10px;
+        font-size: 1.2rem;
+        font-weight: 500;
+        color: #555;
+        margin-bottom: 3rem;
+        /* box-shadow: 0 0.4rem #cfc9c9; */
+        box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.2) 0px 7px 13px -3px, rgba(0, 0, 0, 0.1) 0px -3px 0px inset;
+        border: 3px solid #cfc9c9;
+        cursor: pointer;
+        outline: none;
+        text-align: left;
+        resize: none;
+    }
+
+    .input-word-count {
+        margin-top: -3rem;
+        margin-left: -1rem;
+    }
+    
+    .Input button {
+        padding: 1.1em 2.5em;
+        font-size: 1.2rem;
+        letter-spacing: 2.5px;
+        font-weight: 500;
+        color: #000;
+        background-color: #ddd;
+        border: none;
+        border-radius: 25px;
+        /* box-shadow: 0px 8px 15px rgba(0, 0, 0, 1); */
+        box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+        transition: all 0.3s ease 0s;
+        cursor: pointer;
+        outline: none;
+        color: #fff;
+        background-color: #5C86FF;
+        margin-right: 1rem;
+        margin-left: 1rem;
+    }
+}

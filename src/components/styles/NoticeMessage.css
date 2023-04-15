@@ -1,0 +1,16 @@
+.NoticeMessage {
+
+    /* width: 100%; */
+    margin-top: -1rem;
+    height: 0em;
+    background-color: #fff;
+    padding: 0rem 2rem;
+}
+
+.NoticeMessage-content-text {
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 0rem;
+    padding: 0rem 2rem;
+}

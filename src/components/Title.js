@@ -3,7 +3,7 @@ import './styles/Title.css';
 function Title() {
     return (
         <div className="Title">
-            <h1>GPT<span className="Title-span">One</span></h1>
+            <h1><span className="Title-span">Human</span>GPT</h1>
         </div>
     );
 }

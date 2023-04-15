@@ -8,6 +8,7 @@ import AboutModal from './components/AboutModal';
 import Ouput from './components/Output';
 import AskOutput from './components/AskOutput';
 import ErrorMessage from './components/ErrorMessage';
+import NoticeMessage from './components/NoticeMessage';
 import Footer from './components/Footer';
 import Api from './components/api/Api';
 
@@ -33,6 +34,11 @@ function App() {
     askAPI();
   };
 
+  // scroll to output if output is present
+  if (output || askOutput) {
+    window.scrollTo(0, document.body.scrollHeight);
+  }
+
   return (
     <>
       { (showContactModal || showAboutModal || loading || error) && <div className="modal-open"></div> }
@@ -54,6 +60,7 @@ function App() {
           />
 
           {error && <ErrorMessage onClose={() => setError(false)} />}
+          {!error && !output && !askOutput && <NoticeMessage />}
           {/* {!error && output && <Summary text={output} />} */}
           {!error && output && zeroScore && <Ouput output={output} score={zeroScore} originalScore={originalScore} originalText={originalText} />}
           {!error && askOutput && <AskOutput output={askOutput} score={zeroScore} originalScore={originalScore} originalText={originalText} />}

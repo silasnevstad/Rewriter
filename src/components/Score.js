@@ -91,9 +91,11 @@ function Score({ score, originalScore, showOriginal, setShowOriginal }) {
                     </div>
                 </div>
             </div>
-            <div className="score-button-section">
-                <button className="score-button" onClick={handleButtonClick}> {showOriginal ? 'Back' : 'Original'} </button>
-            </div>
+            {originalScore && (
+                <div className="score-button-section">
+                    <button className="score-button" onClick={handleButtonClick}> {showOriginal ? 'Back' : 'Original'} </button>
+                </div>
+            )}
         </div>
     );
 }
