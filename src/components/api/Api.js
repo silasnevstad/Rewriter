@@ -33,7 +33,7 @@ const cleanResponseString = (response) => {
     return cleanResponse;
 }
 
-function Api({ text, setLoading, setError, setOutput, setAskOutput, setZeroScore, setOriginalScore, setOriginalText }) {
+function Api({ text, setText, setLoading, setError, setOutput, setAskOutput, setZeroScore, setOriginalScore, setOriginalText }) {
     const openaiApiKey = process.env.REACT_APP_OPENAI_API_KEY;
     const gptZeroApiKey = process.env.REACT_APP_GPT_ZERO_API_KEY;
     
@@ -101,8 +101,7 @@ function Api({ text, setLoading, setError, setOutput, setAskOutput, setZeroScore
 
     // takes in text to rewrite and returns openAI response.
     const humanizeText = async (scoreData) => {
-        console.log('Humanizing Text...')
-        let percent = await getScore(scoreData);
+        console.log('Humanizing Text...');
         let perplexities = await getSentencePerplexities(scoreData);
         let rewrittenText = createPerplexityPrompt(perplexities);
         let prompt = `Rewrite the following text. Focus on two factors: perplexity and burstiness. The goal is to increase the perplexity and burstiness as needed, meaning be careful not to over do it so ensure it remains readable, a key is varying sentence lengths. Again make sure to heavily avoid obscure words or convoluted sentence structures. I will also provide you the perplexity of each sentence to better help you adjust the text. AI tend to write with low perplexity so focus on the sentences with the lowest perplexities the most and obviously don't write the perplexities in your response only the sentences. Here is the text with the perplexities after each sentence: ${rewrittenText}`;
@@ -119,12 +118,11 @@ function Api({ text, setLoading, setError, setOutput, setAskOutput, setZeroScore
 
         let cleanResponse = cleanResponseString(text);
 
-        // return clean response
         return cleanResponse;
     }
 
-
     const processAPI = async () => {
+        setAskOutput("");
         if (text !== "") {
             console.log("Running API....");
             setLoading(true);
@@ -144,6 +142,7 @@ function Api({ text, setLoading, setError, setOutput, setAskOutput, setZeroScore
                     setOutput(text);
                 }
 
+                setText("");
                 setError(false);
             } catch (error) {
                 console.log(error);
@@ -155,15 +154,12 @@ function Api({ text, setLoading, setError, setOutput, setAskOutput, setZeroScore
     };
 
     const askAPI = async () => {
+        setOutput("");
         if (text !== "") {
             console.log("Asking question to API....");
             setLoading(true);
 
             try {
-                // let data = await checkGPTZero(text);
-                // setOriginalScore(data);
-                // setOriginalText(text);
-
                 const response = await askGPT([{role: 'user', content: text}], "gpt-4");
                 let responseMessage = response.data.choices[0].message.content;
                 let data = await checkGPTZero(responseMessage);
@@ -172,6 +168,7 @@ function Api({ text, setLoading, setError, setOutput, setAskOutput, setZeroScore
                     responseMessage = await humanizeText(data);
                 }
                 setError(false);
+                setText("");
                 setAskOutput(responseMessage);
             } catch (error) {
                 console.log(error);

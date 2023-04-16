@@ -61,20 +61,20 @@ function OutputSentences({ score, originalScore, showOriginal }) {
     
     return (
         <div className="OutputSentences">
-            {showOriginal ?? (
+            {/* {showOriginal ?? ( */}
                 <>
                     <h3> 
-                        The sentence with the highest perplexity is, "
+                        The sentence with the most perplexity is, "
                         <span className='OutputSentences-bold-text'>{showOriginal ? getHighestPerplexistySentence(originalScore) : getHighestPerplexistySentence(score)}</span>
                         ", with a perplexity of <span className='OutputSentences-bold-score'>{showOriginal ? getHighestPerplexity(originalScore) : getHighestPerplexity(score)}</span>.
                     </h3>
                     <h3>
-                        The sentence with the lowest perplexity is, "
+                        The sentence with the least perplexity is, "
                         <span className='OutputSentences-bold-text'>{showOriginal ? getLowestPerplexitySentence(originalScore) : getLowestPerplexitySentence(score)}</span>
                         ", with a perplexity of <span className='OutputSentences-bold-score'>{showOriginal ? getLowestPerplexity(originalScore) : getLowestPerplexity(score)}</span>.
                     </h3>
                 </>
-            )}
+            {/* )} */}
             
         </div>
     );

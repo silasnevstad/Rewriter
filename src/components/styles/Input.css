@@ -35,6 +35,8 @@
     font-weight: 500;
     color: #555;
     margin-bottom: 3rem;
+    background-color: #fff;
+    opacity: 1;
     /* box-shadow: 0 0.4rem #cfc9c9; */
     box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.2) 0px 7px 13px -3px, rgba(0, 0, 0, 0.1) 0px -3px 0px inset;
     border: 3px solid #cfc9c9;
@@ -62,6 +64,10 @@
 }
   
 .Input button {
+    --color-primary: #5c86ff;
+    --color-secondary: #FBC56C;
+    --background: hsl(230, 30%, 15%);
+    --text: hsl(0, 0%, 100%);
     padding: 1.3em 3em;
     font-size: 1.3rem;
     letter-spacing: 2.5px;
@@ -76,9 +82,10 @@
     cursor: pointer;
     outline: none;
     color: #fff;
-    background-color: #5C86FF;
+    background-color: var(--color-primary);
     margin-right: 1rem;
     margin-left: 1rem;
+    /* background-image: linear-gradient(90deg, var(--color-primary), var(--color-secondary)); */
 }
     
 .Input button:hover {

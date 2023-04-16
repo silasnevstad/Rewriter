@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import Title from './components/Title';
 import Input from './components/Input';
@@ -23,8 +23,8 @@ function App() {
   const [error, setError] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
   const [showAboutModal, setShowAboutModal] = useState(false);
-  const { processAPI } = Api({ text, setLoading, setError, setOutput, setZeroScore, setOriginalScore, setOriginalText });
-  const { askAPI } = Api({ text, setLoading, setError, setOutput, setAskOutput, setZeroScore, setOriginalScore, setOriginalText });
+  const { processAPI } = Api({ text, setText, setLoading, setError, setOutput, setAskOutput, setZeroScore, setOriginalScore, setOriginalText });
+  const { askAPI } = Api({ text, setText, setLoading, setError, setOutput, setAskOutput, setZeroScore, setOriginalScore, setOriginalText });
 
   const handleButtonClick = () => {
     processAPI();
@@ -42,6 +42,7 @@ function App() {
   return (
     <>
       { (showContactModal || showAboutModal || loading || error) && <div className="modal-open"></div> }
+      <div className="App-background"></div>
       <div className={`App ${loading ? 'App-loading' : ''}`}>
         <header className={`App-header ${loading ? 'App-header-loading' : ''}`}>
           <Title />
@@ -60,8 +61,7 @@ function App() {
           />
 
           {error && <ErrorMessage onClose={() => setError(false)} />}
-          {/* {!error && !output && !askOutput && <NoticeMessage />} */}
-          {/* {!error && output && <Summary text={output} />} */}
+          {!error && !output && !askOutput && <NoticeMessage />}
           {!error && output && zeroScore && <Ouput output={output} score={zeroScore} originalScore={originalScore} originalText={originalText} />}
           {!error && askOutput && <AskOutput output={askOutput} score={zeroScore} originalScore={originalScore} originalText={originalText} />}
         </main>
@@ -69,7 +69,7 @@ function App() {
         {showContactModal && <ContactModal onClose={() => setShowContactModal(false)} />}
         {showAboutModal && <AboutModal onClose={() => setShowAboutModal(false)} />}
 
-        <footer className={`App-footer ${loading ? 'App-footer-loading' : ''}`}>
+        <footer className={`App-footer ${output || askOutput ? 'App-footer-bottom' : ''}`}>
           <Footer onContactButtonClick={() => setShowContactModal(true)} onAboutButtonClick={() => setShowAboutModal(true)} />
         </footer>
       </div>

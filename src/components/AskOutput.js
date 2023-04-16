@@ -2,6 +2,7 @@ import './styles/Output.css';
 import { useState } from 'react';
 import Score from './Score';
 import Summary from './Summary';
+import OutputSentences from './OutputSentences';
 
 function AskOutput ({ output, score, originalScore, originalText }) {
     const [showOriginal, setShowOriginal] = useState(false);

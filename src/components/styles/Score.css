@@ -2,14 +2,12 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    /* width: 100%; */
 }
 
 .Score-header {
     display: flex;
     flex-direction: row;
     align-items: flex-start;
-    /* width: 100%; */
     margin-bottom: 1rem;
     gap: 1rem;
 }
@@ -20,14 +18,11 @@
     align-items: flex-start;
     justify-content: flex-start;
     text-align: left;
-    /* width: 100%; */
-    /* margin-left: -8% */
 }
 
 .score-section h3 {
     font-size: 1.8rem;
     color: #333;
-    /* width: 33%; */
 }
 
 .score-bold-text {
@@ -41,13 +36,11 @@
     display: flex;
     align-items: center;
     flex-direction: row;
-    /* width: 33%; */
 }
 
 .average-entry h1 {
     font-size: 1.8rem;
     color: #333;
-    /* margin-top: -.5rem; */
 }
 
 .average-entry .average-score {

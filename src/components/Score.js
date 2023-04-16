@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { PieChart } from 'react-minimal-pie-chart';
 import './styles/Score.css'
 
@@ -52,7 +52,7 @@ function Score({ score, originalScore, showOriginal, setShowOriginal }) {
                                 startAngle={270}
                                 animate={2000}
                                 background="#444"
-                                totalValue={200}
+                                totalValue={250}
                                 style={{
                                     height: 'auto',
                                     width: '90%',
