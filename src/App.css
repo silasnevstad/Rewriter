@@ -35,7 +35,8 @@ header {
 }
 
 .App-footer {
-  margin-top: 7rem;
+  position: absolute;
+  bottom: .8em;
   width: 100%;
 }
 
