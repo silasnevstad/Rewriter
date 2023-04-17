@@ -9,7 +9,7 @@ html {
   z-index: -1;
 
   background-color: #ffffff;
-  opacity: 0.07;
+  opacity: 0.05;
   background-image:  linear-gradient(#5c86ff 1.4000000000000001px, transparent 1.4000000000000001px), linear-gradient(to right, #5c86ff 1.4000000000000001px, #ffffff 1.4000000000000001px);
   background-size: 28px 28px;
 }
