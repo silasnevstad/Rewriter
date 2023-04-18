@@ -24,6 +24,18 @@ const createPerplexityPrompt = (perplexities) => {
     return prompt;
 }
 
+const isHumanGenerated = async (data) => {
+    // loop through paragraphs, if any is above .1 then return false
+    for (let i = 0; i < data.paragraphs.length; i++) {
+        if (data.paragraphs[i].completely_generated_prob > .001) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
 const cleanResponseString = (response) => {
     let cleanResponse = response.replace(/\[Perplexity: \d+\]/g, '');
 
@@ -111,8 +123,9 @@ function Api({ text, setText, setLoading, setError, setOutput, setAskOutput, set
 
         let data = await checkGPTZero(text);
         let newPercent = await getScore(data);
+        let humanMade = await isHumanGenerated(data);
 
-        if (newPercent >= .1) {
+        if (!humanMade) {
             return humanizeText(data);
         }
 
@@ -130,14 +143,14 @@ function Api({ text, setText, setLoading, setError, setOutput, setAskOutput, set
             try {
                 let data = await checkGPTZero(text);
                 let score = await getScore(data);
+                let humanMade = await isHumanGenerated(data);
                 console.log('original score:', data)
                 setOriginalScore(data);
                 setOriginalText(text);
 
-                if (score > 0.1) {
+                if (!humanMade) {
                     let rewrittenText = await humanizeText(data);
                     setOutput(rewrittenText);
-                    return;
                 } else {
                     setOutput(text);
                 }
@@ -164,7 +177,8 @@ function Api({ text, setText, setLoading, setError, setOutput, setAskOutput, set
                 let responseMessage = response.data.choices[0].message.content;
                 let data = await checkGPTZero(responseMessage);
                 let score = await getScore(data);
-                if (score > 5) {
+                let humanMade = await isHumanGenerated(data);
+                if (!humanMade) {
                     responseMessage = await humanizeText(data);
                 }
                 setError(false);
