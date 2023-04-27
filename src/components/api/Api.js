@@ -27,7 +27,7 @@ const createPerplexityPrompt = (perplexities) => {
 const isHumanGenerated = async (data) => {
     // loop through paragraphs, if any is above .1 then return false
     for (let i = 0; i < data.paragraphs.length; i++) {
-        if (data.paragraphs[i].completely_generated_prob > .001) {
+        if (data.paragraphs[i].completely_generated_prob > .01) {
             return false;
         }
     }
@@ -77,10 +77,8 @@ function Api({ text, setText, setLoading, setError, setOutput, setAskOutput, set
                     headers: headers
                 });
                 setZeroScore(response.data.documents[0]);
-                console.log('GPTZero Response:', response.data);
                 resolve(response.data.documents[0]);
             } catch (error) {
-                console.error('Error fetching sentiment:', error);
                 reject(error);
             }
         });
@@ -89,16 +87,13 @@ function Api({ text, setText, setLoading, setError, setOutput, setAskOutput, set
     // asks GPT-4 for a response given messages array
     const askGPT = async (messages, model) => {
         try {
-            console.log('Prompting GPT-4...')
             // get response from openAI
             const response = await openai.createChatCompletion({
                 model: model,
                 messages: messages,
             });
-            console.log('GPT-4 Response:', response.data)
             return response;
         } catch (error) {
-            console.log(error);
             throw new Error('Error');
         }
     };
@@ -107,13 +102,11 @@ function Api({ text, setText, setLoading, setError, setOutput, setAskOutput, set
     const rewriteTextFromPrompt = async (prompt) => {
         let newMessages = messages.concat({'role': 'user', 'content': prompt});
         let response = await askGPT(newMessages, "gpt-4");
-        console.log('rewriteText Text:', response.data.choices[0].message.content);
         return response;
     }
 
     // takes in text to rewrite and returns openAI response.
     const humanizeText = async (scoreData) => {
-        console.log('Humanizing Text...');
         let perplexities = await getSentencePerplexities(scoreData);
         let rewrittenText = createPerplexityPrompt(perplexities);
         let prompt = `Rewrite the following text. Focus on two factors: perplexity and burstiness. The goal is to increase the perplexity and burstiness as needed, meaning be careful not to over do it so ensure it remains readable, a key is varying sentence lengths. Again make sure to heavily avoid obscure words or convoluted sentence structures. I will also provide you the perplexity of each sentence to better help you adjust the text. AI tend to write with low perplexity so focus on the sentences with the lowest perplexities the most and obviously don't write the perplexities in your response only the sentences. Here is the text with the perplexities after each sentence: ${rewrittenText}`;
@@ -137,14 +130,12 @@ function Api({ text, setText, setLoading, setError, setOutput, setAskOutput, set
     const processAPI = async () => {
         setAskOutput("");
         if (text !== "") {
-            console.log("Running API....");
             setLoading(true);
         
             try {
                 let data = await checkGPTZero(text);
                 let score = await getScore(data);
                 let humanMade = await isHumanGenerated(data);
-                console.log('original score:', data)
                 setOriginalScore(data);
                 setOriginalText(text);
 
@@ -158,7 +149,6 @@ function Api({ text, setText, setLoading, setError, setOutput, setAskOutput, set
                 setText("");
                 setError(false);
             } catch (error) {
-                console.log(error);
                 setError(true);
             } finally {
                 setLoading(false);
@@ -169,7 +159,6 @@ function Api({ text, setText, setLoading, setError, setOutput, setAskOutput, set
     const askAPI = async () => {
         setOutput("");
         if (text !== "") {
-            console.log("Asking question to API....");
             setLoading(true);
 
             try {
@@ -185,7 +174,6 @@ function Api({ text, setText, setLoading, setError, setOutput, setAskOutput, set
                 setText("");
                 setAskOutput(responseMessage);
             } catch (error) {
-                console.log(error);
                 setError(true);
             } finally {
                 setLoading(false);
