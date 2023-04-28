@@ -26,6 +26,20 @@
     color: #333;
 }
 
+@media (max-width: 1200px) {
+    .Footer {
+        gap: 0.5rem;
+    }
+
+    .Footer a {
+        font-size: 1rem;
+    }
+
+    .Footer p {
+        font-size: 1rem;
+    }
+}
+
 @media screen and (prefers-color-scheme: dark) {
     .Footer a {
         color: #eee;

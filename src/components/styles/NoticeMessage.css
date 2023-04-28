@@ -15,7 +15,12 @@
 
 @media (max-width: 1200px) {
     .NoticeMessage {
-        margin-top: -4rem;
+        margin-top: -3rem;
+    }
+
+    .NoticeMessage-content-text {
+        font-size: 1.1rem;
+        padding: 0rem 0rem;
     }
 }
 
