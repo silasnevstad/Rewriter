@@ -4,7 +4,7 @@ import Score from './Score';
 import Summary from './Summary';
 import OutputSentences from './OutputSentences';
 
-function AskOutput ({ output, score, originalScore, originalText }) {
+function AskOutput ({ output, score }) {
     const [showOriginal, setShowOriginal] = useState(false);
 
     const getOverallProb = (score) => {
@@ -30,12 +30,12 @@ function AskOutput ({ output, score, originalScore, originalText }) {
             </div>
 
             <div className="Output">
-                <Summary text={output} originalText={originalText} showOriginal={showOriginal} />
+                <Summary text={output} originalText={output} showOriginal={showOriginal} />
                 <div className="Output-row">
                     <div className="Output-row-left">
-                        <Score score={score} originalScore={originalScore} showOriginal={showOriginal} setShowOriginal={setShowOriginal} />
+                        <Score score={score} originalScore={null} showOriginal={showOriginal} setShowOriginal={setShowOriginal} />
                     </div>
-                    <OutputSentences score = {score} originalScore={originalScore} showOriginal={showOriginal} />
+                    <OutputSentences score = {score} originalScore={score} showOriginal={showOriginal} />
                 </div>
             </div>
         </div>

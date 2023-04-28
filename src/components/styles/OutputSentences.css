@@ -25,3 +25,17 @@
     text-shadow: 0 0 0.1em #00000020;
     color: #5C86FF;
 }
+
+@media screen and (prefers-color-scheme: dark) {
+    .OutputSentences h3 {
+        color: #888;
+    }
+    
+    .OutputSentences-bold-text {
+        color: #ddd;
+    }
+    
+    .OutputSentences-bold-score {
+        color: #5C86FF;
+    }
+}

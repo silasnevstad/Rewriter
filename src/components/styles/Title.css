@@ -37,3 +37,39 @@
         right: 1.3%;
     }
 }
+
+@media screen and (prefers-color-scheme: dark) {
+    .Title h1 {
+        --color-primary: #5c86ffcf;
+        --color-secondary: #FBC56Ccf;
+        --background: hsl(230, 30%, 15%);
+        --text: hsl(310, 100%, 95%);
+        font-size: 3rem;
+        color: #4e4e4e;
+        font-family: 'Open Sans', sans-serif;
+        font-weight: 600;
+        animation: typing 1s steps(40), blink-caret 0.5s step-end infinite;
+        max-width: 50em;
+        max-height: 20em;
+
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-image: linear-gradient(35deg, var(--color-primary), var(--color-secondary));
+    }
+
+    .Title-span {
+        color: #5c86ff;
+    }
+
+    @media (max-width: 1200px) {
+        h1 {
+            font-size: 2.5rem;
+        }
+
+        .Title {
+            top: -2%;
+            right: 1.3%;
+        }
+    }
+}

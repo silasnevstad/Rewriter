@@ -27,3 +27,35 @@
     color: #333;
     margin-top: -.7rem;
 }
+
+@media screen and (prefers-color-scheme: dark) {
+    .Description {
+        margin-top: 80vh;
+        display: flex;
+        flex-direction: row;
+        gap: 5rem;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .description-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .description-section h2 {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #fff;
+    }
+
+    .description-section p {
+        font-size: 1.2rem;
+        max-width: 30vw;
+        font-weight: 500;
+        color: #fff;
+        margin-top: -.7rem;
+    }
+}

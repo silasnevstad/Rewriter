@@ -44,7 +44,7 @@ function Score({ score, originalScore, showOriginal, setShowOriginal }) {
                             <PieChart
                                 data={[
                                     {
-                                    value: showOriginal ? getOverallPerplexity(originalScore) : getOverallPerplexity(score),
+                                    value: originalScore ? showOriginal ? getOverallPerplexity(originalScore) : getOverallPerplexity(score) : getOverallPerplexity(score),
                                     color: '#5C86FF',
                                     },
                                 ]}
@@ -69,7 +69,7 @@ function Score({ score, originalScore, showOriginal, setShowOriginal }) {
                             <PieChart
                                 data={[
                                     {
-                                    value: showOriginal ? getOverallBurstiness(originalScore) : getOverallBurstiness(score),
+                                    value: originalScore ? showOriginal ? getOverallBurstiness(originalScore) : getOverallBurstiness(score) : getOverallBurstiness(score),
                                     color: '#5C86FF',
                                     },
                                 ]}

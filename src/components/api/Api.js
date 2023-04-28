@@ -1,11 +1,55 @@
-import axios from 'axios';
+import axios from "axios";
+import { useCallback, useMemo } from "react";
 const { Configuration, OpenAIApi } = require("openai");
 
-const getScore = async (data) => {
-    return data.completely_generated_prob * 100;
-}
+const configuration = new Configuration({ apiKey: process.env.REACT_APP_OPENAI_API_KEY });
+const openai = new OpenAIApi(configuration);
 
-const getSentencePerplexities = async (data) => {
+const messages = [
+  {'role': 'user', 'content': 'I need you to rewrite some text that is currently detected as AI generated to be detected as human generated. There are two factors that are important when detecting content as AI or human generated, perplexity and burstiness. Perplexity measures the randomness of the text, words and sentence lengths, and burstiness measures the variation in perplexity. As some examples, I will give you two peices of text one is detected as human generated and one if detected as AI generated, anaylze these to better help you rewrite the text to be human-generated. \n'},
+  {'role': 'user', 'content': 'This text gets detected as human-generated content: Bitcoin emerged in 2009 as a decentralized digital currency created by the enigmatic Satoshi Nakamoto. It operates on a peer-to-peer network, removing the need for banks and financial institutions. Using blockchain technology, Bitcoin transactions are secure and transparent. This novel approach to transferring value has gained significant attention and adoption. \n\n However, Bitcoin has faced challenges and controversies. Critics argue its decentralized nature can enable illicit activities and its mining process raises environmental concerns. Nonetheless, Bitcoin\'s unique features make it an attractive alternative to traditional currencies in certain situations. As a result, Bitcoin continues to shape the global conversation around the future of finance.'},
+  {'role': 'user', 'content': 'This text gets detected as AI-generated content: Bitcoin is a decentralized digital currency built on blockchain technology that operates without a central bank or administrator. It offers advantages such as low transaction fees, fast processing times, and global accessibility. However, it has faced challenges such as volatility, regulatory scrutiny, and security concerns. \n\n Despite these challenges, Bitcoin remains a popular and innovative digital currency that has the potential to revolutionize the way we think about money and financial transactions. Its value has fluctuated greatly since its creation in 2009, but it has steadily gained popularity and is now one of the most widely used cryptocurrencies in the world. The legality and regulation of Bitcoin varies widely between countries, with some embracing it as a legitimate form of payment while others restrict its use. Nevertheless, Bitcoin is an exciting development in the world of finance and technology that is worth keeping an eye on.'},
+];
+
+const askGPT = async (model, messages) => {
+    try {
+        const response = await openai.createChatCompletion({
+            model: model,
+            messages: messages,
+        })
+        return response.data.choices[0].message.content;
+    } catch (error) {
+        throw error;
+    }
+};
+
+const checkGPTZero = async (text) => {
+    const url = "https://api.gptzero.me/v2/predict/text";
+    const headers = {
+        "accept": "application/json",
+        "X-Api-Key": process.env.REACT_APP_GPT_ZERO_API_KEY,
+        "Content-Type": "application/json",
+    };
+
+    const data = {
+        "document": text,
+    };
+
+    const response = await axios.post(url, data, { headers });
+    const responseData = response.data;
+
+    if (isHumanGenerated(responseData.documents[0])) {
+        return { isHuman: true, data: responseData.documents[0] };
+    }
+
+    return { isHuman: false, data: responseData.documents[0] };
+};
+
+
+const getSentencePerplexities = (data) => {
+    if (!data.sentences) {
+        return {};
+    }
     let perplexities = {};
     for (let i = 0; i < data.sentences.length; i++) {
         perplexities[data.sentences[i].sentence] = data.sentences[i].perplexity;
@@ -18,171 +62,164 @@ const createPerplexityPrompt = (perplexities) => {
 
     for (let sentence in perplexities) {
         // strip sentence of full stop only at the end
-        prompt += `${sentence.slice(0, -1)} [Perplexity: ${perplexities[sentence]}].`;
+        prompt += `${sentence.slice(0, -1)} (${perplexities[sentence]}).`;
     }
 
     return prompt;
 }
 
-const isHumanGenerated = async (data) => {
+const stitchSentences = (perplexities) => {
+    let prompt = '';
+
+    for (let sentence in perplexities) {
+        // string together sentences
+        prompt += `${sentence} `;
+    }
+
+    return prompt;
+}
+
+const isHumanGenerated = (data) => {
+    if (!data.paragraphs) {
+        return false;
+    }
     // loop through paragraphs, if any is above .1 then return false
     for (let i = 0; i < data.paragraphs.length; i++) {
         if (data.paragraphs[i].completely_generated_prob > .01) {
             return false;
         }
     }
-
     return true;
 }
 
-
 const cleanResponseString = (response) => {
-    let cleanResponse = response.replace(/\[Perplexity: \d+\]/g, '');
+    let cleanResponse = response.replace(/\[Perplexity: \d+\]/g, '');   
+
+    // remove any (1) or (2) or (3) oe (29.2)
+    cleanResponse = cleanResponse.replace(/\(\d+\)/g, '');
 
     // remove any extra spaces before periods
     cleanResponse = cleanResponse.replace(/ +\./g, '.');
 
+    // remove any occurences of parthensis with a number inside, either with a decimal or not
+    cleanResponse = cleanResponse.replace(/\(\d+\.?\d*\)/g, '');
+
+    // remove any occurences of parthensis (Perplexity: 29.2), either with a decimal or not
+    cleanResponse = cleanResponse.replace(/\(Perplexity: \d+\.?\d*\)/g, '');
     return cleanResponse;
 }
 
-function Api({ text, setText, setLoading, setError, setOutput, setAskOutput, setZeroScore, setOriginalScore, setOriginalText }) {
-    const openaiApiKey = process.env.REACT_APP_OPENAI_API_KEY;
-    const gptZeroApiKey = process.env.REACT_APP_GPT_ZERO_API_KEY;
-    
-    const configuration = new Configuration({ apiKey: openaiApiKey });
-    const openai = new OpenAIApi(configuration);
+// takes in text to rewrite and returns openAI response.
+const rewriteTextFromMessages = async (messages) => {
+    let response = await askGPT("gpt-4", messages);
+    return response;
+}
 
-    const messages = [
-        {'role': 'user', 'content': 'I need you to rewrite some text. There are two factors that are important when detecting content as AI or human generated, perplexity and burstiness. Perplexity measures the randomness of the text, words and sentence lengths, and burstiness measures the variation in perplexity. As some examples, I will give you two peices of text one is detected as human generated and one if detected as AI generated, anaylze these to better help you rewrite the text to be human-generated. \n'},
-        {'role': 'user', 'content': 'This text gets detected as human-generated content: Bitcoin emerged in 2009 as a decentralized digital currency created by the enigmatic Satoshi Nakamoto. It operates on a peer-to-peer network, removing the need for banks and financial institutions. Using blockchain technology, Bitcoin transactions are secure and transparent. This novel approach to transferring value has gained significant attention and adoption. \n\n However, Bitcoin has faced challenges and controversies. Critics argue its decentralized nature can enable illicit activities and its mining process raises environmental concerns. Nonetheless, Bitcoin\'s unique features make it an attractive alternative to traditional currencies in certain situations. As a result, Bitcoin continues to shape the global conversation around the future of finance.'},
-        {'role': 'user', 'content': 'This text gets detected as AI-generated content: Bitcoin is a decentralized digital currency built on blockchain technology that operates without a central bank or administrator. It offers advantages such as low transaction fees, fast processing times, and global accessibility. However, it has faced challenges such as volatility, regulatory scrutiny, and security concerns. \n\n Despite these challenges, Bitcoin remains a popular and innovative digital currency that has the potential to revolutionize the way we think about money and financial transactions. Its value has fluctuated greatly since its creation in 2009, but it has steadily gained popularity and is now one of the most widely used cryptocurrencies in the world. The legality and regulation of Bitcoin varies widely between countries, with some embracing it as a legitimate form of payment while others restrict its use. Nevertheless, Bitcoin is an exciting development in the world of finance and technology that is worth keeping an eye on.'},
-        // {'role': 'user', 'content': 'I will provide you some text and a percentage score of how likely it is to be AI generated. Use this percentage to determine how much you need to rewrite the text. The higher the percentage the more you need to rewrite. The lower the percentage the less you need to rewrite. So if you get a score of 50% you need to rewrite 50% of the text. If you get a score of 90% you need to rewrite 90% of the text. If you get a score of 10% you need to rewrite 10% of the text. \n'},
+const humanizeFromScore = async (scoreData, failedAttempts = []) => {
+    if (!scoreData) {
+        return '';
+    }
+    
+    let perplexities = getSentencePerplexities(scoreData);
+    let rewrittenText = createPerplexityPrompt(perplexities);
+    let prompt = `Rewrite the following text. Focus on two factors: perplexity and burstiness. The goal is to increase the perplexity and burstiness as needed, meaning be careful not to over do it so ensure it remains readable, a key is varying sentence lengths. Again make sure to heavily avoid obscure words or convoluted sentence structures. I will also provide you the perplexity of each sentence to better help you adjust the text. AI tend to write with low perplexity so focus on the sentences with the lowest perplexities the most and make sure to remove the perplexities from your response so its only the sentences. Here is the text with the perplexities at the end of each sentence: ${rewrittenText}`;
+
+    let messages = [
+        ...failedAttempts,
+        { 'role': 'user', 'content': prompt },
     ];
 
-    const checkGPTZero = async (input) => {
-        const url = 'https://api.gptzero.me/v2/predict/text';
-        const data = {
-            "document": input,
-        }
-        const headers = {
-            'accept': 'application/json',
-            'X-Api-Key': gptZeroApiKey,
-            'Content-Type': 'application/json'
-        }
-    
-        // Return a Promise
-        return new Promise(async (resolve, reject) => {
-            try {
-                const response = await axios.post(url, data, {
-                    headers: headers
-                });
-                setZeroScore(response.data.documents[0]);
-                resolve(response.data.documents[0]);
-            } catch (error) {
-                reject(error);
-            }
-        });
+    if (failedAttempts.length > 0) {
+        messages.unshift({ 'role': 'system', 'content': 'These are previous failed attempts to rewrite the text. Please take them into consideration while providing a better version:' });
     }
 
-    // asks GPT-4 for a response given messages array
-    const askGPT = async (messages, model) => {
+    let response = await rewriteTextFromMessages(messages);
+    let cleanResponse = cleanResponseString(response);
+    let zeroResponse = await checkGPTZero(cleanResponse);
+    let humanMade = zeroResponse.isHuman;
+
+    if (!humanMade) {
+        failedAttempts.push({ 'role': 'system', 'content': `Previous attempt: ${cleanResponse}` });
+        return humanizeFromScore(zeroResponse.data, failedAttempts);
+    }
+
+    return {'text': cleanResponse, 'score': zeroResponse.data, 'human': humanMade};
+}
+
+const humanizeText = async (text) => {
+    const checkResult = await checkGPTZero(text);
+
+    if (checkResult.isHuman) {
+        return {'text': text, 'score': checkResult.data, 'human': true};
+    }
+
+    return humanizeFromScore(checkResult.data);
+}
+
+function Api({
+    text,
+    setText,
+    setLoading,
+    setError,
+    setOutput,
+    setAskOutput,
+    setZeroScore,
+    setOriginalScore,
+    setOriginalText,
+}) {
+
+    const baseUrl = "https://humangpt-backend.herokuapp.com";
+
+    const humanize = useCallback(async () => {
+        if (text === "") {
+            return;
+        }
+        setLoading(true);
+        setOriginalText(text);
+        let checkResult = await checkGPTZero(text);
+        if (checkResult.isHuman) {
+            setOutput(text);
+            setZeroScore(checkResult.data);
+            setText("");
+            setLoading(false);
+            return;
+        }
+        setOriginalScore(checkResult.data);
+
         try {
-            // get response from openAI
-            const response = await openai.createChatCompletion({
-                model: model,
-                messages: messages,
-            });
-            return response;
+            let response = await humanizeFromScore(checkResult.data);
+            setOutput(response.text);
+            setText("");
+            setZeroScore(response.score);
+            setError(false);
         } catch (error) {
-            throw new Error('Error');
+            setError(true);
+        } finally {
+            setLoading(false);
         }
-    };
+    }, [text]);
 
-    // takes in text to rewrite and returns openAI response.
-    const rewriteTextFromPrompt = async (prompt) => {
-        let newMessages = messages.concat({'role': 'user', 'content': prompt});
-        let response = await askGPT(newMessages, "gpt-4");
-        return response;
-    }
-
-    // takes in text to rewrite and returns openAI response.
-    const humanizeText = async (scoreData) => {
-        let perplexities = await getSentencePerplexities(scoreData);
-        let rewrittenText = createPerplexityPrompt(perplexities);
-        let prompt = `Rewrite the following text. Focus on two factors: perplexity and burstiness. The goal is to increase the perplexity and burstiness as needed, meaning be careful not to over do it so ensure it remains readable, a key is varying sentence lengths. Again make sure to heavily avoid obscure words or convoluted sentence structures. I will also provide you the perplexity of each sentence to better help you adjust the text. AI tend to write with low perplexity so focus on the sentences with the lowest perplexities the most and obviously don't write the perplexities in your response only the sentences. Here is the text with the perplexities after each sentence: ${rewrittenText}`;
-
-        let response = await rewriteTextFromPrompt(prompt);
-        let text = response.data.choices[0].message.content;
-
-        let data = await checkGPTZero(text);
-        let newPercent = await getScore(data);
-        let humanMade = await isHumanGenerated(data);
-
-        if (!humanMade) {
-            return humanizeText(data);
+    const askHuman = useCallback(async () => {
+        if (text === "") {
+            return;
         }
-
-        let cleanResponse = cleanResponseString(text);
-
-        return cleanResponse;
-    }
-
-    const processAPI = async () => {
-        setAskOutput("");
-        if (text !== "") {
-            setLoading(true);
+        setLoading(true);
         
-            try {
-                let data = await checkGPTZero(text);
-                let score = await getScore(data);
-                let humanMade = await isHumanGenerated(data);
-                setOriginalScore(data);
-                setOriginalText(text);
-
-                if (!humanMade) {
-                    let rewrittenText = await humanizeText(data);
-                    setOutput(rewrittenText);
-                } else {
-                    setOutput(text);
-                }
-
-                setText("");
-                setError(false);
-            } catch (error) {
-                setError(true);
-            } finally {
-                setLoading(false);
-            }
+        try {
+            let responseAI = await askGPT("gpt-4", [{'role': 'user', 'content': text}]);
+            let response = await humanizeText(responseAI);
+            setAskOutput(response.text);
+            setZeroScore(response.score);
+            setError(false);
+        } catch (error) {
+            console.log(error);
+            setError(true);
+        } finally {
+            setLoading(false);
         }
-    };
+    }, [text]);
 
-    const askAPI = async () => {
-        setOutput("");
-        if (text !== "") {
-            setLoading(true);
-
-            try {
-                const response = await askGPT([{role: 'user', content: text}], "gpt-4");
-                let responseMessage = response.data.choices[0].message.content;
-                let data = await checkGPTZero(responseMessage);
-                let score = await getScore(data);
-                let humanMade = await isHumanGenerated(data);
-                if (!humanMade) {
-                    responseMessage = await humanizeText(data);
-                }
-                setError(false);
-                setText("");
-                setAskOutput(responseMessage);
-            } catch (error) {
-                setError(true);
-            } finally {
-                setLoading(false);
-            }
-        }
-    };
-
-
-    return { processAPI, askAPI };
+    return { humanize, askHuman };
 }
 
 export default Api;

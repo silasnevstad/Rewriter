@@ -23,15 +23,15 @@ function App() {
   const [error, setError] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
   const [showAboutModal, setShowAboutModal] = useState(false);
-  const { processAPI } = Api({ text, setText, setLoading, setError, setOutput, setAskOutput, setZeroScore, setOriginalScore, setOriginalText });
-  const { askAPI } = Api({ text, setText, setLoading, setError, setOutput, setAskOutput, setZeroScore, setOriginalScore, setOriginalText });
+  const { humanize } = Api({ text, setText, setLoading, setError, setOutput, setAskOutput, setZeroScore, setOriginalScore, setOriginalText });
+  const { askHuman } = Api({ text, setText, setLoading, setError, setOutput, setAskOutput, setZeroScore, setOriginalScore, setOriginalText });
 
   const handleButtonClick = () => {
-    processAPI();
+    humanize();
   };
 
   const handleAskButtonClick = () => {
-    askAPI();
+    askHuman();
   };
 
   // scroll to output if output is present
@@ -62,8 +62,8 @@ function App() {
 
           {error && <ErrorMessage onClose={() => setError(false)} />}
           {!error && !output && !askOutput && <NoticeMessage />}
-          {!error && output && zeroScore && <Ouput output={output} score={zeroScore} originalScore={originalScore} originalText={originalText} />}
-          {!error && askOutput && <AskOutput output={askOutput} score={zeroScore} originalScore={originalScore} originalText={originalText} />}
+          {!error && output && !loading && <Ouput output={output} score={zeroScore} originalScore={originalScore} originalText={originalText} />}
+          {!error && askOutput && !loading && <AskOutput output={askOutput} score={zeroScore} />}
         </main>
 
         {showContactModal && <ContactModal onClose={() => setShowContactModal(false)} />}

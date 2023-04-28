@@ -25,3 +25,13 @@
     font-weight: 500;
     color: #333;
 }
+
+@media screen and (prefers-color-scheme: dark) {
+    .Footer a {
+        color: #eee;
+    }
+
+    .Footer p {
+        color: #eee;
+    }
+}

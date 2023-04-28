@@ -6,14 +6,13 @@
 .Output-row {
     display: flex;
     flex-direction: row;
-    /* align-items: center; */
-    /* justify-content: space-between; */
     width: 100%;
     margin-bottom: 2rem;
 }
 
 .Output-row-left {
     width: 65%;
+    text-align: left;
 }
 
 .Output-container {
@@ -67,4 +66,14 @@
         width: 100%;
     }
     
+}
+
+@media screen and (prefers-color-scheme: dark) {
+    .Output-notice p {
+        color: #ddd;
+    }
+
+    .Output-scroll p {
+        color: #ddd;
+    }
 }

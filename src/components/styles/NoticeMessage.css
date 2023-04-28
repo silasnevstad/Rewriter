@@ -1,6 +1,4 @@
 .NoticeMessage {
-
-    /* width: 100%; */
     margin-top: -4rem;
     height: 0em;
     background-color: #fff;
@@ -17,6 +15,22 @@
 
 @media (max-width: 1200px) {
     .NoticeMessage {
-        margin-top: 0rem;
+        margin-top: -4rem;
+    }
+}
+
+@media screen and (prefers-color-scheme: dark) {
+    .NoticeMessage {
+        background-color: #333;
+    }
+
+    .NoticeMessage-content-text {
+        color: #ddd;
+    }
+
+    @media (max-width: 1200px) {
+        .NoticeMessage {
+            margin-top: -4rem;
+        }
     }
 }

@@ -42,7 +42,7 @@ function Modal({ onClose }) {
                 </button>
                 <div className="header">
                     <div className="content">
-                        <span className="title">Contact <span style={{ color: '#333' }}>Us</span></span>
+                        <span className="title">Contact <span className='title-span'>Us</span></span>
                         <div className="bottom-content">
                             <form onSubmit={handleSubmit}>
                                 <div className="form-group">

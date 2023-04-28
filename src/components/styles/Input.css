@@ -165,3 +165,25 @@
         margin-left: 1rem;
     }
 }
+
+@media screen and (prefers-color-scheme: dark) {
+    .Input .input {
+        background-color: #333;
+        color: #fff;
+        border: 1px solid #555;
+        box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.2) 0px 7px 13px -3px, rgba(0, 0, 0, 0.1) 0px -3px 0px inset;
+    }
+    
+    .Input button {
+        background-color: #5C86FFcf;
+        color: #fff;
+        box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+    }
+
+    .Input button:hover {
+        background-color: #5C86FFcf;
+        box-shadow: #5C86FF5f 0px 4px 8px, #5C86FF1f 0px 24px 26px -3px, #0000003f 0px -3px 0px inset;
+        color: #fff;
+        transform: translateY(-7px);
+    }
+}

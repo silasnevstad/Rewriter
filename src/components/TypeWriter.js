@@ -3,10 +3,10 @@ import './styles/TypeWriter.css';
 function TypeWriter() {
     return (
         <div className="typewriter-container">
-            <div class="typewriter">
-                <div class="slide"><i></i></div>
-                <div class="paper"></div>
-                <div class="keyboard"></div>
+            <div className="typewriter">
+                <div className="slide"><i></i></div>
+                <div className="paper"></div>
+                <div className="keyboard"></div>
             </div>
             {/* <div class="loader">
                 <p>loading</p>

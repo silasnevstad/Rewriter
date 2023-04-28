@@ -58,7 +58,6 @@
     color: #333;
     font-size: 1.1rem;
     font-weight: 500;
-    background-color: #fff;
     border: none;
     letter-spacing: .05em;
 }
@@ -74,8 +73,8 @@
 @media (max-width: 1200px) {
     .Score {
         width: 100%;
-        align-items: center;
-        margin-bottom: 2rem;
+        align-items: flex-start;
+        text-align: left;
     }
 
     .score-section {
@@ -83,16 +82,49 @@
         flex-direction: column;
         align-items: center;
         margin-left: 0;
-        justify-content: flex-start ;
+        text-align: left;
     }
 
     .score-section h3 {
-        width: 100%;
-        text-align: center;
+        width: 90%;
+        text-align: left;
+        font-size: 1.8em;
     }
 
     .average-entry {
-        width: 80%;
+        width: 90%;
         flex-direction: row;
+        font-size: 1.5em;
+    }
+
+    .average-entry h1 {
+        font-size: 1.2em;
+    }
+}
+
+@media screen and (prefers-color-scheme: dark) {
+    .Score {
+        color: #fff;
+    }
+
+    .Score-header {
+        color: #fff;
+    }
+
+    .score-section h3 {
+        color: #fff;
+    }
+
+    .average-entry h1 {
+        color: #fff;
+    }
+
+    .score-button {
+        color: #fff;
+        background-color: #222;
+    }
+
+    .score-button:hover {
+        color: #fff;
     }
 }

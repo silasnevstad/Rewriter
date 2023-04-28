@@ -12,3 +12,9 @@
     font-weight: 500;
     max-width: 30rem;
 }
+
+@media screen and (prefers-color-scheme: dark) {
+    .ErrorMessage {
+        color: #fff;
+    }
+}
