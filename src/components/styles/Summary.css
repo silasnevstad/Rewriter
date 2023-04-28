@@ -17,6 +17,17 @@
     text-align: left;
 }
 
+@media (max-width: 1200px) {
+    .Summary {
+        margin-top: 1rem;
+        padding: 1rem 1rem;
+    }
+
+    .summary-text {
+        font-size: 1.2rem;
+    }
+}
+
 @media screen and (prefers-color-scheme: dark) {
     .Summary {
         border: 1px solid #333;

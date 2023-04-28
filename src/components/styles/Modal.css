@@ -158,19 +158,6 @@ textarea {
       opacity: 0;
     }
 }
-  
-
-/* @media (min-width: 640px) {
-    .card {
-        max-width: 200px;
-    }
-}
-
-@media (max-width: 768px) {
-    .card {
-        max-width: 450px;
-    }
-} */
 
 @media (max-width: 1024px) {
     .Modal {
@@ -185,6 +172,7 @@ textarea {
     .card p {
         font-size: 1.1rem;
         margin-top: 1.1rem;
+        max-width: 350px;
     }
 
     .bottom-content {
