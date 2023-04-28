@@ -26,6 +26,12 @@
     color: #5C86FF;
 }
 
+@media (max-width: 1200px) {
+    .OutputSentences {
+        margin-top: 1rem;
+    }
+}
+
 @media screen and (prefers-color-scheme: dark) {
     .OutputSentences h3 {
         color: #888;

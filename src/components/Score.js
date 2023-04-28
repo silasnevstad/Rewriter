@@ -16,7 +16,7 @@ function Score({ score, originalScore, showOriginal, setShowOriginal }) {
 
     const getOverallBurstiness = (score) => {
         // round to 4 decimal places
-        return Math.round(score.overall_burstiness * 10000) / 10000;
+        return Math.round(score.overall_burstiness * 100) / 100;
     };
 
     const getOverallPerplexity = (score) => {
@@ -26,7 +26,7 @@ function Score({ score, originalScore, showOriginal, setShowOriginal }) {
             sum += score.sentences[i].perplexity;
         }
 
-        return Math.round(sum / score.sentences.length * 10000) / 10000;
+        return Math.round(sum / score.sentences.length * 100) / 100;
     };
 
     const handleButtonClick = () => {

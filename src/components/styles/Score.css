@@ -88,18 +88,23 @@
     .score-section h3 {
         width: 90%;
         text-align: left;
-        font-size: 1.8em;
+        font-size: 1.6em;
     }
 
     .average-entry {
         width: 90%;
         flex-direction: row;
-        font-size: 1.5em;
+        font-size: 1.4em;
     }
 
-    .average-entry h1 {
-        font-size: 1.2em;
+    .average-entry .average-score {
+        font-size: 2rem;
     }
+
+    .Score-header {
+        margin-bottom: 0rem;
+    }
+
 }
 
 @media screen and (prefers-color-scheme: dark) {
