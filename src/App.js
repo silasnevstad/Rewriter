@@ -15,7 +15,6 @@ import LoginOptions from './components/LoginOptions';
 import LoginModal from './components/LoginModal';
 import SignUpModal from './components/SignUpModal';
 import ApiKeyModal from './components/ApiKeyModal';
-// import { useAuthState } from 'react-firebase-hooks/auth';
 import { getUserApiKey, signOut, auth, onAuthStateChanged  } from './components/api/firebase';
 
 function App() {
@@ -34,13 +33,14 @@ function App() {
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
   const [email, setEmail] = useState('');
   const [loggedIn, setLoggedIn] = useState(false);
-  const [chatGPTApiKey, setChatApiKey] = useState(process.env.REACT_APP_OPENAI_API_KEY);
-  const [GPTZeroApiKey, setGPTZeroApiKey] = useState(process.env.REACT_APP_GPT_ZERO_API_KEY);
+  const [chatGPTApiKey, setChatApiKey] = useState("");
+  const [GPTZeroApiKey, setGPTZeroApiKey] = useState("");  
   const [apiKeySet, setApiKeySet] = useState(false);
   const [guestMode, setGuestMode] = useState(false);
-  const { humanize } = Api({ text, setText, setLoading, setError, setOutput, setAskOutput, setZeroScore, setOriginalScore, setOriginalText, chatGPTApiKey, GPTZeroApiKey });
-  const { askHuman } = Api({ text, setText, setLoading, setError, setOutput, setAskOutput, setZeroScore, setOriginalScore, setOriginalText, chatGPTApiKey, GPTZeroApiKey });
-
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  const { humanize } = Api({ text, setText, setLoading, setError, setOutput, setAskOutput, setZeroScore, setOriginalScore, setOriginalText, chatGPTApiKey: chatGPTApiKey, GPTZeroApiKey: GPTZeroApiKey });
+  const { askHuman } = Api({ text, setText, setLoading, setError, setOutput, setAskOutput, setZeroScore, setOriginalScore, setOriginalText, chatGPTApiKey: chatGPTApiKey, GPTZeroApiKey: GPTZeroApiKey });
+  
 
   const handleButtonClick = () => {
     humanize();
@@ -107,7 +107,7 @@ function App() {
         const userEmail = user.email;
         setEmail(userEmail);
         setLoggedIn(true);
-
+  
         // Get user API key
         const apiKey = await getUserApiKey(userEmail);
         if (apiKey !== null) {
@@ -119,11 +119,16 @@ function App() {
         setLoggedIn(false);
         setApiKeySet(false);
         setChatApiKey(process.env.REACT_APP_OPENAI_API_KEY);
-        setGPTZeroApiKey(process.env.REACT_APP_GPT_ZERO_API_KEY);
         setEmail('');
       }
-    });
+  
+      // Set GPT-Zero API key
+      setGPTZeroApiKey(process.env.REACT_APP_GPT_ZERO_API_KEY);
 
+      // set checkingAuth to false
+      setCheckingAuth(false);
+    });
+  
     // Clean up the listener when the component is unmounted
     return () => {
       unsubscribe();
@@ -132,14 +137,14 @@ function App() {
 
   return (
     <>
-      { (showContactModal || showAboutModal || showLoginModal || showSignUpModal || showApiKeyModal || loading || error) && <div className="modal-open"></div> }
+      { (showContactModal || showAboutModal || showLoginModal || showSignUpModal || showApiKeyModal || checkingAuth || loading || error) && <div className="modal-open"></div> }
       <div className="App-background"></div>
       <div className={`App ${loading ? 'App-loading' : ''}`}>
         <header className={`App-header ${loading ? 'App-header-loading' : ''}`}>
           <Title />
         </header>
 
-        {loading && <TypeWriter />}
+        {(loading || checkingAuth) && <TypeWriter />}
 
         {
           !loggedIn ? (
@@ -150,7 +155,7 @@ function App() {
             </>
           ) : (
             
-              !apiKeySet ? (
+              !checkingAuth && !apiKeySet ? (
                 <ApiKeyModal onClose={() => setApiKeySet(true)} email={email} show={!apiKeySet} changeToGuestMode={changeToGuestMode} setChatApiKey={setChatApiKey} setGPTZeroApiKey={setGPTZeroApiKey} />
               ) : (
                 <main className={`App-main ${loading ? 'App-main-loading' : ''}`}>

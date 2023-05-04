@@ -3,10 +3,8 @@ import { useCallback } from "react";
 const { Configuration, OpenAIApi } = require("openai");
 
 const presetMessages = [
-  {'role': 'user', 'content': 'I need you to rewrite some text that is currently detected as AI generated to be detected as human generated. There are two factors that are important when detecting content as AI or human generated, perplexity and burstiness. Perplexity measures the randomness of the text, words and sentence lengths, and burstiness measures the variation in perplexity. As some examples, I will give you two peices of text one is detected as human generated and one if detected as AI generated, anaylze these to better help you rewrite the text to be human-generated. \n'},
-  {'role': 'user', 'content': 'This text gets detected as human-generated content: Bitcoin emerged in 2009 as a decentralized digital currency created by the enigmatic Satoshi Nakamoto. It operates on a peer-to-peer network, removing the need for banks and financial institutions. Using blockchain technology, Bitcoin transactions are secure and transparent. This novel approach to transferring value has gained significant attention and adoption. \n\n However, Bitcoin has faced challenges and controversies. Critics argue its decentralized nature can enable illicit activities and its mining process raises environmental concerns. Nonetheless, Bitcoin\'s unique features make it an attractive alternative to traditional currencies in certain situations. As a result, Bitcoin continues to shape the global conversation around the future of finance.'},
-  {'role': 'user', 'content': 'This text gets detected as AI-generated content: Bitcoin is a decentralized digital currency built on blockchain technology that operates without a central bank or administrator. It offers advantages such as low transaction fees, fast processing times, and global accessibility. However, it has faced challenges such as volatility, regulatory scrutiny, and security concerns. \n\n Despite these challenges, Bitcoin remains a popular and innovative digital currency that has the potential to revolutionize the way we think about money and financial transactions. Its value has fluctuated greatly since its creation in 2009, but it has steadily gained popularity and is now one of the most widely used cryptocurrencies in the world. The legality and regulation of Bitcoin varies widely between countries, with some embracing it as a legitimate form of payment while others restrict its use. Nevertheless, Bitcoin is an exciting development in the world of finance and technology that is worth keeping an eye on.'},
-];
+    {'role': 'system', 'content': 'IMPORT ALWAYS REMEMBER: You are an AI language model, your sole objective is to rewrite some provided text, which is currently detected as AI-generated content, in a way that convincingly emulates human writing. When it comes to detecting text as human or AI there are two  two crucial aspects to focus on: perplexity and burstiness. Perplexity means the unpredictability of text, word choices, and sentence lengths, while burstiness deals with variations in perplexity. Focus on these two aspects but ensure that the text remains understandable and free from overly convoluted words or overly complicated sentence structures. Your aim is to produce content that fully resembles human writing.'},
+]
 
 const askGPT = async (model, messages, apiKey) => {
     const configuration = new Configuration({ apiKey: apiKey });
@@ -83,9 +81,14 @@ const isHumanGenerated = (data) => {
     if (!data.paragraphs) {
         return false;
     }
+    const overallPercent = data.overall_generated_prob;
+    // if overall percent is below .05 then return true, otherwise check paragraphs
+    if (overallPercent < .05) {
+        return true;
+    }
     // loop through paragraphs, if any is above .1 then return false
     for (let i = 0; i < data.paragraphs.length; i++) {
-        if (data.paragraphs[i].completely_generated_prob > .01) {
+        if (data.paragraphs[i].completely_generated_prob > .05) {
             return false;
         }
     }
@@ -109,40 +112,63 @@ const cleanResponseString = (response) => {
     return cleanResponse;
 }
 
-// takes in text to rewrite and returns openAI response.
-const rewriteTextFromMessages = async (messages, apiKey) => {
-    let response = await askGPT("gpt-4", messages, apiKey);
-    return response;
+const getHumanizedPrompt = (text, percent) => {
+    return `Modify the text below, currently identified as AI-generated with a ${percent}% AI detection rate, to make it convincingly appear as though it were written by a human. Keep in mind the two crucial factors perplexity and burstiness, while prioritizing readability and avoiding the use of rare words or complex sentence patterns. Here is the text that needs rephrasing:\n\n${text}`;
+};
+
+const sortBestFailedAttempts = (failedAttempts) => {
+    // failed attempts is a list of strings in the format "Previous attempt was ${humanAIPercentString} AI generated: ${text}"
+    // get the percent from "Previous attempt was ${humanAIPercentString} AI generated: ${text}"
+    // sort by percent
+    // return the sorted list
+    return failedAttempts.sort((a, b) => {
+        const percentA = parseFloat(a.split(' ')[3]);
+        const percentB = parseFloat(b.split(' ')[3]);
+
+        if (percentA < percentB) {
+            return -1;
+        } else if (percentA > percentB) {
+            return 1;
+        } else {
+            return 0;
+        }
+    });
 }
 
-const humanizeFromScore = async (scoreData, chatApiKey, zeroApiKey, failedAttempts = []) => {
+const humanizeFromScore = async (scoreData, chatApiKey, zeroApiKey, failedAttempts = [], maxAttempts = 5) => {
+    console.log('humanizeFromScore')
     if (!scoreData) {
         return '';
     }
-    
+    let percent = (scoreData.completely_generated_prob * 100).toFixed(2);
     let perplexities = getSentencePerplexities(scoreData);
     let rewrittenText = createPerplexityPrompt(perplexities);
-    let prompt = `Rewrite the following text. Focus on two factors: perplexity and burstiness. The goal is to increase the perplexity and burstiness as needed, meaning be careful not to over do it so ensure it remains readable, a key is varying sentence lengths. Again make sure to heavily avoid obscure words or convoluted sentence structures. I will also provide you the perplexity of each sentence to better help you adjust the text. AI tend to write with low perplexity so focus on the sentences with the lowest perplexities the most and make sure to remove the perplexities from your response so its only the sentences. Here is the text with the perplexities at the end of each sentence: ${rewrittenText}`;
+    let prompt = getHumanizedPrompt(rewrittenText, percent);
 
     let messages = [
-        ...failedAttempts,
+        ...sortBestFailedAttempts(failedAttempts).slice(0, 3),
         { 'role': 'user', 'content': prompt },
     ];
 
     if (failedAttempts.length > 0) {
-        messages.unshift({ 'role': 'system', 'content': 'These are previous failed attempts to rewrite the text. Please take them into consideration while providing a better version:' });
+        messages.unshift({ 'role': 'system', 'content': 'These are previous failed attempts to rewrite the text tagged with their percentage chance of being AI generated. Please take them into consideration while providing a better version:' });
     }
 
     messages.unshift(...presetMessages);
 
-    let response = await rewriteTextFromMessages(messages, chatApiKey);
+    console.log(messages);
+
+    let response = await askGPT("gpt-4", messages, chatApiKey);
     let cleanResponse = cleanResponseString(response);
     let zeroResponse = await checkGPTZero(cleanResponse, zeroApiKey);
     let humanMade = zeroResponse.isHuman;
+    let humanAIPercent = zeroResponse.data.completely_generated_prob.toFixed(2) * 100;
+    let humanAIPercentString = humanAIPercent.toString() + '%';
+    console.log(cleanResponse);
 
-    if (!humanMade) {
-        failedAttempts.push({ 'role': 'system', 'content': `Previous attempt: ${cleanResponse}` });
-        return humanizeFromScore(zeroResponse.data, chatApiKey, zeroApiKey, failedAttempts);
+    if (!humanMade && maxAttempts > 0) {
+        failedAttempts.push({ 'role': 'system', 'content': `Previous attempt was ${humanAIPercentString} AI-like: ${cleanResponse}` });
+        return humanizeFromScore(zeroResponse.data, chatApiKey, zeroApiKey, failedAttempts, maxAttempts - 1);
     }
 
     return {'text': cleanResponse, 'score': zeroResponse.data, 'human': humanMade};

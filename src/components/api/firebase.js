@@ -66,12 +66,12 @@ async function removePrevoiusApiKey(email) {
 
 async function getUserApiKey(email) {
     const querySnapshot = await getDocs(collection(db, "apiKeys"));
-    querySnapshot.forEach((doc) => {
+    for (const doc of querySnapshot.docs) {
         const data = doc.data();
         if (data.email === email) {
             return data.apiKey;
         }
-    });
+    }
 }
 
 export { signUp, signIn, signOut, addUserApiKey, getUserApiKey, auth, onAuthStateChanged };

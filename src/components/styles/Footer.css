@@ -15,6 +15,15 @@
     border: none;
     cursor: pointer;
 }
+
+.lower-footer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    z-index: -1;
+}
   
 .Footer a {
     font-size: 1.2rem;
@@ -37,6 +46,10 @@
 
 @media (max-width: 1200px) {
     .Footer {
+        flex-direction: column;
+    }
+
+    .Footer {
         gap: 0.5rem;
     }
 
@@ -46,6 +59,10 @@
 
     .Footer p {
         font-size: 1rem;
+    }
+
+    .mobile-hidden {
+        display: none;
     }
 }
 
