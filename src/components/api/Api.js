@@ -117,26 +117,15 @@ const getHumanizedPrompt = (text, percent) => {
 };
 
 const sortBestFailedAttempts = (failedAttempts) => {
-    // failed attempts is a list of strings in the format "Previous attempt was ${humanAIPercentString} AI generated: ${text}"
-    // get the percent from "Previous attempt was ${humanAIPercentString} AI generated: ${text}"
-    // sort by percent
-    // return the sorted list
-    return failedAttempts.sort((a, b) => {
-        const percentA = parseFloat(a.split(' ')[3]);
-        const percentB = parseFloat(b.split(' ')[3]);
-
-        if (percentA < percentB) {
-            return -1;
-        } else if (percentA > percentB) {
-            return 1;
-        } else {
-            return 0;
-        }
+    let sortedAttempts = failedAttempts.sort((a, b) => {
+        let aPercent = a.content.split(' ')[3];
+        let bPercent = b.content.split(' ')[3];
+        return aPercent - bPercent;
     });
+    return sortedAttempts.slice(0, 2);
 }
 
 const humanizeFromScore = async (scoreData, chatApiKey, zeroApiKey, failedAttempts = [], maxAttempts = 5) => {
-    console.log('humanizeFromScore')
     if (!scoreData) {
         return '';
     }
@@ -144,19 +133,17 @@ const humanizeFromScore = async (scoreData, chatApiKey, zeroApiKey, failedAttemp
     let perplexities = getSentencePerplexities(scoreData);
     let rewrittenText = createPerplexityPrompt(perplexities);
     let prompt = getHumanizedPrompt(rewrittenText, percent);
-
     let messages = [
-        ...sortBestFailedAttempts(failedAttempts).slice(0, 3),
         { 'role': 'user', 'content': prompt },
     ];
-
     if (failedAttempts.length > 0) {
+        let attempts = sortBestFailedAttempts(failedAttempts).slice(0, 3);
+        messages.unshift(...attempts);
         messages.unshift({ 'role': 'system', 'content': 'These are previous failed attempts to rewrite the text tagged with their percentage chance of being AI generated. Please take them into consideration while providing a better version:' });
     }
 
     messages.unshift(...presetMessages);
 
-    console.log(messages);
 
     let response = await askGPT("gpt-4", messages, chatApiKey);
     let cleanResponse = cleanResponseString(response);
@@ -164,7 +151,6 @@ const humanizeFromScore = async (scoreData, chatApiKey, zeroApiKey, failedAttemp
     let humanMade = zeroResponse.isHuman;
     let humanAIPercent = zeroResponse.data.completely_generated_prob.toFixed(2) * 100;
     let humanAIPercentString = humanAIPercent.toString() + '%';
-    console.log(cleanResponse);
 
     if (!humanMade && maxAttempts > 0) {
         failedAttempts.push({ 'role': 'system', 'content': `Previous attempt was ${humanAIPercentString} AI-like: ${cleanResponse}` });

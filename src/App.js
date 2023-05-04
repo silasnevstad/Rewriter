@@ -40,13 +40,14 @@ function App() {
   const [checkingAuth, setCheckingAuth] = useState(true);
   const { humanize } = Api({ text, setText, setLoading, setError, setOutput, setAskOutput, setZeroScore, setOriginalScore, setOriginalText, chatGPTApiKey: chatGPTApiKey, GPTZeroApiKey: GPTZeroApiKey });
   const { askHuman } = Api({ text, setText, setLoading, setError, setOutput, setAskOutput, setZeroScore, setOriginalScore, setOriginalText, chatGPTApiKey: chatGPTApiKey, GPTZeroApiKey: GPTZeroApiKey });
-  
 
   const handleButtonClick = () => {
+    setAskOutput('');
     humanize();
   };
 
   const handleAskButtonClick = () => {
+    setOutput('');
     askHuman();
   };
 
