@@ -3,68 +3,77 @@ import { useCallback } from "react";
 const { Configuration, OpenAIApi } = require("openai");
 
 const presetMessages = [
-    {'role': 'system', 'content': 'IMPORT ALWAYS REMEMBER: You are an AI language model, your sole objective is to rewrite some provided text, which is currently detected as AI-generated content, in a way that convincingly emulates human writing. When it comes to detecting text as human or AI there are two  two crucial aspects to focus on: perplexity and burstiness. Perplexity means the unpredictability of text, word choices, and sentence lengths, while burstiness deals with variations in perplexity. Focus on these two aspects but ensure that the text remains understandable and free from overly convoluted words or overly complicated sentence structures. Your aim is to produce content that fully resembles human writing.'},
-]
+  {
+    role: "system",
+    content:
+      "IMPORTANT: You are an AI language model, and your goal is to rewrite the provided text, which is currently detected as AI-generated, to convincingly emulate human writing. AI-generated content typically has low perplexity and burstiness, so your task is to increase these values while rewriting. Perplexity measures the randomness of the text, word choices, and sentence lengths, whereas burstiness quantifies the variations in perplexity. The provided text includes the perplexity value for each sentence in parentheses at the end. Focus on increasing perplexity and burstiness, especially for sentences with lower values. While doing so, ensure the text remains readable and understandable and free from overly convoluted words or complicated sentence structures. Your aim is to produce content that fully resembles human writing without losing the original meaning.",
+  },
+];
 
 const askGPT = async (model, messages, apiKey) => {
     const configuration = new Configuration({ apiKey: apiKey });
     const openai = new OpenAIApi(configuration);
-
+  
     try {
-        const response = await openai.createChatCompletion({
-            model: model,
-            messages: messages,
-        })
-        return response.data.choices[0].message.content;
+      const response = await openai.createChatCompletion({
+        model: model,
+        messages: messages,
+      });
+      return response.data.choices[0].message.content;
     } catch (error) {
-        throw error;
+      console.error("Error in askGPT:", error);
+      throw error;
     }
 };
 
-const checkGPTZero = async (text, apiKey) => {
+  const checkGPTZero = async (text, apiKey) => {
     const url = "https://api.gptzero.me/v2/predict/text";
     const headers = {
-        "accept": "application/json",
-        "X-Api-Key": apiKey,
-        "Content-Type": "application/json",
+      accept: "application/json",
+      "X-Api-Key": apiKey,
+      "Content-Type": "application/json",
     };
-
+  
     const data = {
-        "document": text,
+      document: text,
     };
-
-    const response = await axios.post(url, data, { headers });
-    const responseData = response.data;
-
-    if (isHumanGenerated(responseData.documents[0])) {
+  
+    try {
+      const response = await axios.post(url, data, { headers });
+      const responseData = response.data;
+  
+      if (isHumanGenerated(responseData.documents[0])) {
         return { isHuman: true, data: responseData.documents[0] };
+      }
+  
+      return { isHuman: false, data: responseData.documents[0] };
+    } catch (error) {
+      console.error("Error in checkGPTZero:", error);
+      throw error;
     }
-
-    return { isHuman: false, data: responseData.documents[0] };
 };
 
 
-const getSentencePerplexities = (data) => {
+  const getSentencePerplexities = (data) => {
     if (!data.sentences) {
-        return {};
+      return {};
     }
-    let perplexities = {};
+    const perplexities = {};
     for (let i = 0; i < data.sentences.length; i++) {
-        perplexities[data.sentences[i].sentence] = data.sentences[i].perplexity;
+      perplexities[data.sentences[i].sentence] = data.sentences[i].perplexity;
     }
     return perplexities;
-}
+};
 
 const createPerplexityPrompt = (perplexities) => {
-    let prompt = '';
-
-    for (let sentence in perplexities) {
-        // strip sentence of full stop only at the end
-        prompt += `${sentence.slice(0, -1)} (${perplexities[sentence]}).`;
+    let prompt = "";
+  
+    for (const sentence in perplexities) {
+      prompt += `${sentence.slice(0, -1)} (${perplexities[sentence]}).`;
     }
-
+  
     return prompt;
-}
+};
 
 // const stitchSentences = (perplexities) => {
 //     let prompt = '';
@@ -79,96 +88,94 @@ const createPerplexityPrompt = (perplexities) => {
 
 const isHumanGenerated = (data) => {
     if (!data.paragraphs) {
-        return false;
+      return false;
     }
     const overallPercent = data.overall_generated_prob;
-    // if overall percent is below .05 then return true, otherwise check paragraphs
-    if (overallPercent < .05) {
-        return true;
+    if (overallPercent < 0.05) {
+      return true;
     }
-    // loop through paragraphs, if any is above .1 then return false
     for (let i = 0; i < data.paragraphs.length; i++) {
-        if (data.paragraphs[i].completely_generated_prob > .05) {
-            return false;
+      if (data.paragraphs[i].completely_generated_prob > 0.05) {
+        return false;
         }
     }
     return true;
 }
 
 const cleanResponseString = (response) => {
-    let cleanResponse = response.replace(/\[Perplexity: \d+\]/g, '');   
-
-    // remove any (1) or (2) or (3) oe (29.2)
-    cleanResponse = cleanResponse.replace(/\(\d+\)/g, '');
-
-    // remove any extra spaces before periods
-    cleanResponse = cleanResponse.replace(/ +\./g, '.');
-
-    // remove any occurences of parthensis with a number inside, either with a decimal or not
-    cleanResponse = cleanResponse.replace(/\(\d+\.?\d*\)/g, '');
-
-    // remove any occurences of parthensis (Perplexity: 29.2), either with a decimal or not
-    cleanResponse = cleanResponse.replace(/\(Perplexity: \d+\.?\d*\)/g, '');
+    let cleanResponse = response.replace(/\[Perplexity: \d+\]/g, "");
+  
+    cleanResponse = cleanResponse.replace(/\(\d+\)/g, "");
+    cleanResponse = cleanResponse.replace(/ +\./g, ".");
+    cleanResponse = cleanResponse.replace(/\(\d+\.?\d*\)/g, "");
+    cleanResponse = cleanResponse.replace(/\(Perplexity: \d+\.?\d*\)/g, "");
     return cleanResponse;
-}
+};
 
 const getHumanizedPrompt = (text, percent) => {
-    return `Modify the text below, currently identified as AI-generated with a ${percent}% AI detection rate, to make it convincingly appear as though it were written by a human. Keep in mind the two crucial factors perplexity and burstiness, while prioritizing readability and avoiding the use of rare words or complex sentence patterns. Here is the text that needs rephrasing:\n\n${text}`;
+    return `Rewrite the text below, which has been identified as AI-generated with a ${percent}% AI detection rate. The text comes with the perplexity of each sentence in parentheses at the end. Focus on increasing perplexity and burstiness, giving special attention to sentences with lower values, while maintaining readability. Avoid using rare words or complex sentence structures. Your objective is to create content that closely resembles human writing. Here is the text that needs to be rewritten:\n\n${text}`;
 };
 
 const sortBestFailedAttempts = (failedAttempts) => {
-    let sortedAttempts = failedAttempts.sort((a, b) => {
-        let aPercent = a.content.split(' ')[3];
-        let bPercent = b.content.split(' ')[3];
-        return aPercent - bPercent;
+    const sortedAttempts = failedAttempts.sort((a, b) => {
+      const aPercent = a.content.split(" ")[3];
+      const bPercent = b.content.split(" ")[3];
+      return aPercent - bPercent;
     });
     return sortedAttempts.slice(0, 2);
-}
+};
 
 const humanizeFromScore = async (scoreData, chatApiKey, zeroApiKey, failedAttempts = [], maxAttempts = 5) => {
     if (!scoreData) {
-        return '';
+      return "";
     }
-    let percent = (scoreData.completely_generated_prob * 100).toFixed(2);
-    let perplexities = getSentencePerplexities(scoreData);
-    let rewrittenText = createPerplexityPrompt(perplexities);
-    let prompt = getHumanizedPrompt(rewrittenText, percent);
-    let messages = [
-        { 'role': 'user', 'content': prompt },
+    const percent = (scoreData.completely_generated_prob * 100).toFixed(2);
+    const perplexities = getSentencePerplexities(scoreData);
+    const rewrittenText = createPerplexityPrompt(perplexities);
+    console.log(rewrittenText)
+    const prompt = getHumanizedPrompt(rewrittenText, percent);
+    const messages = [
+      { role: "user", content: prompt },
     ];
     if (failedAttempts.length > 0) {
-        let attempts = sortBestFailedAttempts(failedAttempts).slice(0, 3);
-        messages.unshift(...attempts);
-        messages.unshift({ 'role': 'system', 'content': 'These are previous failed attempts to rewrite the text tagged with their percentage chance of being AI generated. Please take them into consideration while providing a better version:' });
+      const attempts = sortBestFailedAttempts(failedAttempts).slice(0, 3);
+      messages.unshift(...attempts);
+      messages.unshift({ role: "system", content: "These are the previous attempts to rewrite the text, each labeled with their AI-generated detection percentage. As you work on improving the text, please consider these earlier attempts and learn from their shortcomings. Your goal is to create a version with increased perplexity and burstiness that more closely resembles human writing while maintaining readability and avoiding rare words or complex sentence structures:" });
     }
-
+  
     messages.unshift(...presetMessages);
-
-
-    let response = await askGPT("gpt-4", messages, chatApiKey);
-    let cleanResponse = cleanResponseString(response);
-    let zeroResponse = await checkGPTZero(cleanResponse, zeroApiKey);
-    let humanMade = zeroResponse.isHuman;
-    let humanAIPercent = zeroResponse.data.completely_generated_prob.toFixed(2) * 100;
-    let humanAIPercentString = humanAIPercent.toString() + '%';
-
-    if (!humanMade && maxAttempts > 0) {
-        failedAttempts.push({ 'role': 'system', 'content': `Previous attempt was ${humanAIPercentString} AI-like: ${cleanResponse}` });
+  
+    try {
+      const response = await askGPT("gpt-4", messages, chatApiKey);
+      const cleanResponse = cleanResponseString(response);
+      const zeroResponse = await checkGPTZero(cleanResponse, zeroApiKey);
+      const humanMade = zeroResponse.isHuman;
+      const humanAIPercent = zeroResponse.data.completely_generated_prob.toFixed(2) * 100;
+  
+      if (!humanMade && maxAttempts > 0) {
+        failedAttempts.push({ role: "system", content: `Previous attempt was ${humanAIPercent}% AI-like: ${cleanResponse}` });
         return humanizeFromScore(zeroResponse.data, chatApiKey, zeroApiKey, failedAttempts, maxAttempts - 1);
+      }
+  
+      return { text: cleanResponse, score: zeroResponse.data, human: humanMade };
+    } catch (error) {
+      console.error("Error in humanizeFromScore:", error);
+      throw error;
     }
-
-    return {'text': cleanResponse, 'score': zeroResponse.data, 'human': humanMade};
-}
+};
 
 const humanizeText = async (text, chatApiKey, zeroApiKey) => {
-    const checkResult = await checkGPTZero(text, zeroApiKey);
-
-    if (checkResult.isHuman) {
-        return {'text': text, 'score': checkResult.data, 'human': true};
+    try {
+        const checkResult = await checkGPTZero(text, zeroApiKey);
+        if (checkResult.isHuman) {
+            return { text: text, score: checkResult.data, human: true};
+        }
+        return humanizeFromScore(checkResult.data, chatApiKey, zeroApiKey);
+    } catch (error) {
+        console.error("Error in humanizeText:", error);
+        throw error;
     }
-
-    return humanizeFromScore(checkResult.data, chatApiKey, zeroApiKey);
-}
+};
 
 function Api({
     text,
@@ -222,7 +229,7 @@ function Api({
         setLoading(true);
         
         try {
-            let responseAI = await askGPT("gpt-4", [{'role': 'user', 'content': text}], chatGPTApiKey);
+            let responseAI = await askGPT("gpt-4", [{role: 'user', content: text}], chatGPTApiKey);
             let response = await humanizeText(responseAI, chatGPTApiKey, GPTZeroApiKey);
             setAskOutput(response.text);
             setZeroScore(response.score);
