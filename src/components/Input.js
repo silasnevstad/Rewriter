@@ -1,16 +1,16 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
 import './styles/Input.css';
 
 function Input({ text, setText, handleButtonClick, handleAskButtonClick, loading }) {
-    const [placeholder, setPlaceholder] = useState('Type text you want to rewrite here');
-    const placeholders = [
-        'Type text you want to rewrite here',
-        'Write a 300 words about Napoleon',
-        'Write an email to my boss',
-        'Generate a poem written in Emily Dickinson\'s style',
-        'Write about the future of AI',
-        'Generate a story about a Bee in Stephen King\'s style',
-    ]
+    const placeholder = 'Type text you want to rewrite here';
+    // const placeholders = [
+    //     'Type text you want to rewrite here',
+    //     'Write a 300 words about Napoleon',
+    //     'Write an email to my boss',
+    //     'Generate a poem written in Emily Dickinson\'s style',
+    //     'Write about the future of AI',
+    //     'Generate a story about a Bee in Stephen King\'s style',
+    // ]
 
     const handleClick = () => {
         handleButtonClick();

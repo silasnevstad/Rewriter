@@ -1,0 +1,101 @@
+.LoginOptions {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    position: absolute;
+    top: 50%;
+    align-self: center;
+    transform: translateY(-50%);
+    width: 100%;
+}
+
+.LoginOptions-top {
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2em;
+}
+
+.LoginOptions-button {
+    --color-primary: #5c86ff;
+    --color-secondary: #FBC56C;
+    --background: hsl(230, 30%, 15%);
+    --text: hsl(0, 0%, 100%);
+    padding: 1.3em 3em;
+    font-size: 1.3rem;
+    letter-spacing: 2.5px;
+    font-weight: 600;
+    border: none;
+    border-radius: 25px;
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+    transition: all 0.3s ease 0s;
+    cursor: pointer;
+    outline: none;
+    color: #fff;
+    background-color: var(--color-primary);
+    margin-right: 1rem;
+    margin-left: 1rem;
+}
+
+.LoginOptions-button:hover {
+    /* box-shadow: 0px 15px 20px #275EFEaf; */
+    box-shadow: #275EFEaf 0px 4px 8px, #275EFE9f 0px 24px 26px -3px, #0000003f 0px -3px 0px inset;
+    transform: translateY(-7px);
+}
+    
+.LoginOptions-button:active {
+    transform: translateY(-1px);
+}
+
+.LoginOptions-guest-button {
+    --color-primary: #5c86ff;
+    --color-secondary: #FBC56C;
+    --background: hsl(230, 30%, 15%);
+    --text: hsl(0, 0%, 100%);
+    padding: 1.3em 3em;
+    font-size: 1.3rem;
+    letter-spacing: 2.5px;
+    font-weight: 600;
+    border: none;
+    border-radius: 25px;
+    /* box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset; */
+    transition: all 0.3s ease 0s;
+    cursor: pointer;
+    outline: none;
+    /* color: #fff; */
+    background-color: transparent;
+    color: var(--color-secondary);
+    margin-right: 1rem;
+    margin-left: 1rem;
+}
+
+.LoginOptions-guest-button:hover {
+    color: #ffbe55;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+}
+
+@media (max-width: 1200px) {
+    .LoginOptions {
+        flex-direction: column;
+    }
+    
+    .LoginOptions-top {
+        flex-direction: column;
+        margin-bottom: 1em;
+    }
+
+    .LoginOptions-button {
+        margin-bottom: 1em;
+        padding: 1.3em 2.5em;
+        font-size: 1.2rem;
+        letter-spacing: 2.5px;
+        font-weight: 500;
+        border-radius: 25px;
+
+    }
+}

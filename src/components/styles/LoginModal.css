@@ -1,0 +1,41 @@
+.login-error {
+    color: red;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-top: 1.8rem;
+    text-align: center;
+}
+
+.lower-options {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1.5rem;
+}
+
+.lower-buttons {
+    margin-top: .5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+    background-color: transparent;
+    border: none;
+    color: #999;
+}
+
+.lower-buttons:hover {
+    cursor: pointer;
+}
+
+.lower-anchors {
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: center;
+    color: #5C86FF;
+    text-decoration: none;
+}
+
+.api-modal-info {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #999;
+}

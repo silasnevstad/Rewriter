@@ -1,17 +1,17 @@
 import axios from "axios";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 const { Configuration, OpenAIApi } = require("openai");
 
-const configuration = new Configuration({ apiKey: process.env.REACT_APP_OPENAI_API_KEY });
-const openai = new OpenAIApi(configuration);
-
-const messages = [
+const presetMessages = [
   {'role': 'user', 'content': 'I need you to rewrite some text that is currently detected as AI generated to be detected as human generated. There are two factors that are important when detecting content as AI or human generated, perplexity and burstiness. Perplexity measures the randomness of the text, words and sentence lengths, and burstiness measures the variation in perplexity. As some examples, I will give you two peices of text one is detected as human generated and one if detected as AI generated, anaylze these to better help you rewrite the text to be human-generated. \n'},
   {'role': 'user', 'content': 'This text gets detected as human-generated content: Bitcoin emerged in 2009 as a decentralized digital currency created by the enigmatic Satoshi Nakamoto. It operates on a peer-to-peer network, removing the need for banks and financial institutions. Using blockchain technology, Bitcoin transactions are secure and transparent. This novel approach to transferring value has gained significant attention and adoption. \n\n However, Bitcoin has faced challenges and controversies. Critics argue its decentralized nature can enable illicit activities and its mining process raises environmental concerns. Nonetheless, Bitcoin\'s unique features make it an attractive alternative to traditional currencies in certain situations. As a result, Bitcoin continues to shape the global conversation around the future of finance.'},
   {'role': 'user', 'content': 'This text gets detected as AI-generated content: Bitcoin is a decentralized digital currency built on blockchain technology that operates without a central bank or administrator. It offers advantages such as low transaction fees, fast processing times, and global accessibility. However, it has faced challenges such as volatility, regulatory scrutiny, and security concerns. \n\n Despite these challenges, Bitcoin remains a popular and innovative digital currency that has the potential to revolutionize the way we think about money and financial transactions. Its value has fluctuated greatly since its creation in 2009, but it has steadily gained popularity and is now one of the most widely used cryptocurrencies in the world. The legality and regulation of Bitcoin varies widely between countries, with some embracing it as a legitimate form of payment while others restrict its use. Nevertheless, Bitcoin is an exciting development in the world of finance and technology that is worth keeping an eye on.'},
 ];
 
-const askGPT = async (model, messages) => {
+const askGPT = async (model, messages, apiKey) => {
+    const configuration = new Configuration({ apiKey: apiKey });
+    const openai = new OpenAIApi(configuration);
+
     try {
         const response = await openai.createChatCompletion({
             model: model,
@@ -23,11 +23,11 @@ const askGPT = async (model, messages) => {
     }
 };
 
-const checkGPTZero = async (text) => {
+const checkGPTZero = async (text, apiKey) => {
     const url = "https://api.gptzero.me/v2/predict/text";
     const headers = {
         "accept": "application/json",
-        "X-Api-Key": process.env.REACT_APP_GPT_ZERO_API_KEY,
+        "X-Api-Key": apiKey,
         "Content-Type": "application/json",
     };
 
@@ -68,16 +68,16 @@ const createPerplexityPrompt = (perplexities) => {
     return prompt;
 }
 
-const stitchSentences = (perplexities) => {
-    let prompt = '';
+// const stitchSentences = (perplexities) => {
+//     let prompt = '';
 
-    for (let sentence in perplexities) {
-        // string together sentences
-        prompt += `${sentence} `;
-    }
+//     for (let sentence in perplexities) {
+//         // string together sentences
+//         prompt += `${sentence} `;
+//     }
 
-    return prompt;
-}
+//     return prompt;
+// }
 
 const isHumanGenerated = (data) => {
     if (!data.paragraphs) {
@@ -110,12 +110,12 @@ const cleanResponseString = (response) => {
 }
 
 // takes in text to rewrite and returns openAI response.
-const rewriteTextFromMessages = async (messages) => {
-    let response = await askGPT("gpt-4", messages);
+const rewriteTextFromMessages = async (messages, apiKey) => {
+    let response = await askGPT("gpt-4", messages, apiKey);
     return response;
 }
 
-const humanizeFromScore = async (scoreData, failedAttempts = []) => {
+const humanizeFromScore = async (scoreData, chatApiKey, zeroApiKey, failedAttempts = []) => {
     if (!scoreData) {
         return '';
     }
@@ -133,27 +133,29 @@ const humanizeFromScore = async (scoreData, failedAttempts = []) => {
         messages.unshift({ 'role': 'system', 'content': 'These are previous failed attempts to rewrite the text. Please take them into consideration while providing a better version:' });
     }
 
-    let response = await rewriteTextFromMessages(messages);
+    messages.unshift(...presetMessages);
+
+    let response = await rewriteTextFromMessages(messages, chatApiKey);
     let cleanResponse = cleanResponseString(response);
-    let zeroResponse = await checkGPTZero(cleanResponse);
+    let zeroResponse = await checkGPTZero(cleanResponse, zeroApiKey);
     let humanMade = zeroResponse.isHuman;
 
     if (!humanMade) {
         failedAttempts.push({ 'role': 'system', 'content': `Previous attempt: ${cleanResponse}` });
-        return humanizeFromScore(zeroResponse.data, failedAttempts);
+        return humanizeFromScore(zeroResponse.data, chatApiKey, zeroApiKey, failedAttempts);
     }
 
     return {'text': cleanResponse, 'score': zeroResponse.data, 'human': humanMade};
 }
 
-const humanizeText = async (text) => {
-    const checkResult = await checkGPTZero(text);
+const humanizeText = async (text, chatApiKey, zeroApiKey) => {
+    const checkResult = await checkGPTZero(text, zeroApiKey);
 
     if (checkResult.isHuman) {
         return {'text': text, 'score': checkResult.data, 'human': true};
     }
 
-    return humanizeFromScore(checkResult.data);
+    return humanizeFromScore(checkResult.data, chatApiKey, zeroApiKey);
 }
 
 function Api({
@@ -166,9 +168,11 @@ function Api({
     setZeroScore,
     setOriginalScore,
     setOriginalText,
+    chatGPTApiKey,
+    GPTZeroApiKey
 }) {
 
-    const baseUrl = "https://humangpt-backend.herokuapp.com";
+    // const baseUrl = "https://humangpt-backend.herokuapp.com";
 
     const humanize = useCallback(async () => {
         if (text === "") {
@@ -176,7 +180,7 @@ function Api({
         }
         setLoading(true);
         setOriginalText(text);
-        let checkResult = await checkGPTZero(text);
+        let checkResult = await checkGPTZero(text, GPTZeroApiKey);
         if (checkResult.isHuman) {
             setOutput(text);
             setZeroScore(checkResult.data);
@@ -187,7 +191,7 @@ function Api({
         setOriginalScore(checkResult.data);
 
         try {
-            let response = await humanizeFromScore(checkResult.data);
+            let response = await humanizeFromScore(checkResult.data, chatGPTApiKey, GPTZeroApiKey);
             setOutput(response.text);
             setText("");
             setZeroScore(response.score);
@@ -206,13 +210,12 @@ function Api({
         setLoading(true);
         
         try {
-            let responseAI = await askGPT("gpt-4", [{'role': 'user', 'content': text}]);
-            let response = await humanizeText(responseAI);
+            let responseAI = await askGPT("gpt-4", [{'role': 'user', 'content': text}], chatGPTApiKey);
+            let response = await humanizeText(responseAI, chatGPTApiKey, GPTZeroApiKey);
             setAskOutput(response.text);
             setZeroScore(response.score);
             setError(false);
         } catch (error) {
-            console.log(error);
             setError(true);
         } finally {
             setLoading(false);

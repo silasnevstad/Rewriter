@@ -17,4 +17,8 @@
     .ErrorMessage {
         color: #fff;
     }
+
+    .ErrorMessage p {
+        color: #5C86FF;
+    }
 }
