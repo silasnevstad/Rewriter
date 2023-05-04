@@ -1,19 +1,20 @@
+import React from 'react';
 import './styles/Footer.css';
 
-function Footer({ onContactButtonClick, onAboutButtonClick, loggedIn, signOut, signUp, toggleApiKeyModal }) {
+function Footer({ onContactButtonClick, onAboutButtonClick, loggedIn, signOut, signUp, toggleApiKeyModal, guestMode }) {
     return (
         <div className="Footer">
             <p>2022-2023 © GPTOne</p>
             <p> | </p>
-            <a onClick={onContactButtonClick}>Contact</a>
+            <button className="footer-link" onClick={onContactButtonClick}>Contact</button>
             <p> | </p>
-            <a onClick={onAboutButtonClick}>About</a>
+            <button className="footer-link" onClick={onAboutButtonClick}>About</button>
             {loggedIn && !guestMode && 
             <>
                 <p> | </p>
-                <a onClick={loggedIn ? signOut : signUp}>{loggedIn ? 'Sign Out' : 'Sign Up'}</a>
+                <button className="footer-link" onClick={loggedIn ? signOut : signUp}>{loggedIn ? 'Sign Out' : 'Sign Up'}</button>
                 <p> | </p>
-                <a onClick={toggleApiKeyModal}>API Key</a>
+                <button className="footer-link" onClick={toggleApiKeyModal}>API Key</button>
             </>}
 
         </div>

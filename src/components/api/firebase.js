@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, addDoc, getDocs, deleteDoc } from "firebase/firestore";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -74,4 +74,4 @@ async function getUserApiKey(email) {
     });
 }
 
-export { signUp, signIn, signOut, addUserApiKey, getUserApiKey };
+export { signUp, signIn, signOut, addUserApiKey, getUserApiKey, auth, onAuthStateChanged };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import Title from './components/Title';
 import Input from './components/Input';
@@ -16,7 +16,7 @@ import LoginModal from './components/LoginModal';
 import SignUpModal from './components/SignUpModal';
 import ApiKeyModal from './components/ApiKeyModal';
 // import { useAuthState } from 'react-firebase-hooks/auth';
-import { getUserApiKey, signOut } from './components/api/firebase';
+import { getUserApiKey, signOut, auth, onAuthStateChanged  } from './components/api/firebase';
 
 function App() {
   const [text, setText] = useState('');
@@ -99,6 +99,36 @@ function App() {
   if (output || askOutput) {
     window.scrollTo(0, document.body.scrollHeight);
   }
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // User is logged in
+        const userEmail = user.email;
+        setEmail(userEmail);
+        setLoggedIn(true);
+
+        // Get user API key
+        const apiKey = await getUserApiKey(userEmail);
+        if (apiKey !== null) {
+          setApiKeySet(true);
+          setChatApiKey(apiKey);
+        }
+      } else {
+        // User is logged out
+        setLoggedIn(false);
+        setApiKeySet(false);
+        setChatApiKey(process.env.REACT_APP_OPENAI_API_KEY);
+        setGPTZeroApiKey(process.env.REACT_APP_GPT_ZERO_API_KEY);
+        setEmail('');
+      }
+    });
+
+    // Clean up the listener when the component is unmounted
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   return (
     <>

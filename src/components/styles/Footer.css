@@ -7,6 +7,15 @@
     z-index: -1;
 }
 
+.footer-link {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #333;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+  
 .Footer a {
     font-size: 1.2rem;
     font-weight: 500;
@@ -41,6 +50,15 @@
 }
 
 @media screen and (prefers-color-scheme: dark) {
+    .footer-link {
+        color: #eee;
+    }
+
+    .footer-link:hover {
+        color: #FBC56C;
+        transform: scale(1.03);
+    }
+
     .Footer a {
         color: #eee;
     }

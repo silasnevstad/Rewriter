@@ -201,7 +201,7 @@ function Api({
         } finally {
             setLoading(false);
         }
-    }, [text]);
+    }, [text, GPTZeroApiKey, chatGPTApiKey, setLoading, setError, setText, setOutput, setZeroScore, setOriginalScore, setOriginalText]);
 
     const askHuman = useCallback(async () => {
         if (text === "") {
@@ -220,7 +220,7 @@ function Api({
         } finally {
             setLoading(false);
         }
-    }, [text]);
+    }, [text, GPTZeroApiKey, chatGPTApiKey, setLoading, setError, setAskOutput, setZeroScore]);
 
     return { humanize, askHuman };
 }
