@@ -21,7 +21,7 @@ const askGPT = async (model, messages, apiKey) => {
       });
       return response.data.choices[0].message.content;
     } catch (error) {
-      console.error("Error in askGPT:", error);
+    //   console.error("Error in askGPT:", error);
       throw error;
     }
 };
@@ -48,7 +48,7 @@ const askGPT = async (model, messages, apiKey) => {
   
       return { isHuman: false, data: responseData.documents[0] };
     } catch (error) {
-      console.error("Error in checkGPTZero:", error);
+    //   console.error("Error in checkGPTZero:", error);
       throw error;
     }
 };
@@ -132,7 +132,6 @@ const humanizeFromScore = async (scoreData, chatApiKey, zeroApiKey, failedAttemp
     const percent = (scoreData.completely_generated_prob * 100).toFixed(2);
     const perplexities = getSentencePerplexities(scoreData);
     const rewrittenText = createPerplexityPrompt(perplexities);
-    console.log(rewrittenText)
     const prompt = getHumanizedPrompt(rewrittenText, percent);
     const messages = [
       { role: "user", content: prompt },
@@ -159,7 +158,7 @@ const humanizeFromScore = async (scoreData, chatApiKey, zeroApiKey, failedAttemp
   
       return { text: cleanResponse, score: zeroResponse.data, human: humanMade };
     } catch (error) {
-      console.error("Error in humanizeFromScore:", error);
+    //   console.error("Error in humanizeFromScore:", error);
       throw error;
     }
 };
@@ -172,7 +171,7 @@ const humanizeText = async (text, chatApiKey, zeroApiKey) => {
         }
         return humanizeFromScore(checkResult.data, chatApiKey, zeroApiKey);
     } catch (error) {
-        console.error("Error in humanizeText:", error);
+        // console.error("Error in humanizeText:", error);
         throw error;
     }
 };
