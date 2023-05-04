@@ -8,7 +8,7 @@ function Footer({ onContactButtonClick, onAboutButtonClick, loggedIn, signOut, s
             <a onClick={onContactButtonClick}>Contact</a>
             <p> | </p>
             <a onClick={onAboutButtonClick}>About</a>
-            {loggedIn && 
+            {loggedIn && !guestMode && 
             <>
                 <p> | </p>
                 <a onClick={loggedIn ? signOut : signUp}>{loggedIn ? 'Sign Out' : 'Sign Up'}</a>

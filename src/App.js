@@ -37,6 +37,7 @@ function App() {
   const [chatGPTApiKey, setChatApiKey] = useState(process.env.REACT_APP_OPENAI_API_KEY);
   const [GPTZeroApiKey, setGPTZeroApiKey] = useState(process.env.REACT_APP_GPT_ZERO_API_KEY);
   const [apiKeySet, setApiKeySet] = useState(false);
+  const [guestMode, setGuestMode] = useState(false);
   const { humanize } = Api({ text, setText, setLoading, setError, setOutput, setAskOutput, setZeroScore, setOriginalScore, setOriginalText, chatGPTApiKey, GPTZeroApiKey });
   const { askHuman } = Api({ text, setText, setLoading, setError, setOutput, setAskOutput, setZeroScore, setOriginalScore, setOriginalText, chatGPTApiKey, GPTZeroApiKey });
 
@@ -89,6 +90,7 @@ function App() {
   const changeToGuestMode = () => {
     setLoggedIn(true);
     setApiKeySet(true);
+    setGuestMode(true);
     setChatApiKey(process.env.REACT_APP_OPENAI_API_KEY);
     setGPTZeroApiKey(process.env.REACT_APP_GPT_ZERO_API_KEY);
   };
@@ -147,7 +149,7 @@ function App() {
         <SignUpModal onClose={toggleSignUpModal} show={showSignUpModal} toggleLoggedIn={toggleLoggedIn} />
 
         <footer className={`App-footer ${output || askOutput ? 'App-footer-bottom' : ''}`}>
-          <Footer onContactButtonClick={() => setShowContactModal(true)} onAboutButtonClick={() => setShowAboutModal(true)} loggedIn={loggedIn} signOut={signOutUser} signUp={toggleSignUpModal} toggleApiKeyModal={toggleApiKeyModal} />
+          <Footer onContactButtonClick={() => setShowContactModal(true)} onAboutButtonClick={() => setShowAboutModal(true)} loggedIn={loggedIn} signOut={signOutUser} signUp={toggleSignUpModal} toggleApiKeyModal={toggleApiKeyModal} guestMode={guestMode} />
         </footer>
       </div>
     </>
