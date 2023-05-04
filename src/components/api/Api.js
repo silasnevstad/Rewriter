@@ -155,6 +155,13 @@ const humanizeFromScore = async (scoreData, chatApiKey, zeroApiKey, failedAttemp
         failedAttempts.push({ role: "system", content: `Previous attempt was ${humanAIPercent}% AI-like: ${cleanResponse}` });
         return humanizeFromScore(zeroResponse.data, chatApiKey, zeroApiKey, failedAttempts, maxAttempts - 1);
       }
+
+      if (!humanMade && maxAttempts === 0) {
+        const bestAttempt = sortBestFailedAttempts(failedAttempts)[0];
+        const text = bestAttempt.content.split(": ")[1];
+        const score = await checkGPTZero(text, zeroApiKey);
+        return { text: text, score: score.data, human: false };
+      }
   
       return { text: cleanResponse, score: zeroResponse.data, human: humanMade };
     } catch (error) {

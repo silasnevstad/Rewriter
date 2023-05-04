@@ -77,7 +77,7 @@ function Score({ score, originalScore, showOriginal, setShowOriginal }) {
                                 startAngle={270}
                                 animate={2000}
                                 background="#444"
-                                totalValue={200}
+                                totalValue={300}
                                 style={{
                                     height: 'auto',
                                     width: '90%',
