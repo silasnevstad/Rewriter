@@ -2,6 +2,9 @@
     display: flex;
     flex-direction: column;
     margin-top: 3rem;
+    /* border: 1px solid #aaa; */
+    /* box-shadow: rgba(0, 0, 0, 0.3) 0px 2px 4px, rgba(0, 0, 0, 0.2) 0px 7px 13px -3px, rgba(0, 0, 0, 0.1) 0px -3px 0px inset; */
+    border-radius: 10px;
 }
 
 .OutputSentences h3 {
@@ -26,7 +29,7 @@
     color: #5C86FF;
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1000px) {
     .OutputSentences {
         margin-top: 1rem;
     }

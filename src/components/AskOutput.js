@@ -35,7 +35,9 @@ function AskOutput ({ output, score }) {
                     <div className="Output-row-left">
                         <Score score={score} originalScore={null} showOriginal={showOriginal} setShowOriginal={setShowOriginal} />
                     </div>
-                    <OutputSentences score = {score} originalScore={score} showOriginal={showOriginal} />
+                    <div className="Output-row-right">
+                        <OutputSentences score = {score} originalScore={score} showOriginal={showOriginal} />
+                    </div>
                 </div>
             </div>
         </div>

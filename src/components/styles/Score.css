@@ -2,14 +2,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-}
-
-.Score-header {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    margin-bottom: 1rem;
-    gap: 1rem;
+    margin-top: 2.5rem;
 }
 
 .score-section {
@@ -18,10 +11,16 @@
     align-items: flex-start;
     justify-content: flex-start;
     text-align: left;
+    border: 1px solid #aaa;
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 2px 4px, rgba(0, 0, 0, 0.2) 0px 7px 13px -3px, rgba(0, 0, 0, 0.1) 0px -3px 0px inset;
+    border-radius: 10px;
+    padding: .6rem .6rem;
 }
 
 .score-section h3 {
     font-size: 1.8rem;
+    margin-bottom: 1rem;
+    margin-top: -.2rem;
     color: #333;
 }
 
@@ -39,19 +38,19 @@
 }
 
 .average-entry h1 {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     color: #333;
 }
 
 .average-entry .average-score {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     color: #5C86FF;
 }
 
 .average-pie-chart {
-    /* margin-top: -1.2em; */
+    margin-top: .7em;
     padding-right: .5em;
-    width: 12%;
+    width: 4.5em;
 }
 
 .score-button {
@@ -71,11 +70,11 @@
     text-underline-offset: 5px;
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1000px) {
     .Score {
         width: 100%;
-        align-items: flex-start;
-        text-align: left;
+        align-items: center;
+        text-align: center;
     }
 
     .score-section {
@@ -83,7 +82,8 @@
         flex-direction: column;
         align-items: center;
         margin-left: 0;
-        text-align: left;
+        text-align: center;
+        padding: .5rem 1rem;
     }
 
     .score-section h3 {
@@ -95,15 +95,20 @@
     .average-entry {
         width: 90%;
         flex-direction: row;
-        font-size: 1.4em;
+        font-size: 1.2em;
+        text-align: left;
     }
 
     .average-entry .average-score {
-        font-size: 2rem;
+        font-size: 1.5rem;
     }
 
     .Score-header {
         margin-bottom: 0rem;
+    }
+
+    .average-pie-chart {
+        width: 3.5em;
     }
 
 }

@@ -6,13 +6,18 @@
 .Output-row {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
     width: 100%;
     margin-bottom: 2rem;
 }
 
 .Output-row-left {
     width: 65%;
-    text-align: left;
+}
+
+.Output-row-right {
+    /* width: 100%; */
+    margin-left: 2rem;
 }
 
 .Output-container {
@@ -42,7 +47,7 @@
     /* margin-bottom: -2rem; */
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1000px) {
     .Output {
         flex-direction: column;
     }
