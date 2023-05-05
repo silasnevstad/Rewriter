@@ -60,6 +60,7 @@
     border: none;
     letter-spacing: .05em;
     background-color: transparent;
+    margin-top: 0.3rem;
 }
 
 .score-button:hover {
