@@ -178,7 +178,7 @@ const humanizeText = async (text, chatApiKey, zeroApiKey) => {
         if (checkResult.isHuman) {
             return { text: text, score: checkResult.data, human: true};
         }
-        return humanizeFromScore(checkResult.data, chatApiKey, zeroApiKey);
+        return humanizeFromScore(checkResult.data, chatApiKey, zeroApiKey, [], process.env.REACT_APP_OPENAI_API_KEY === chatGPTApiKey ? 5 : 10);
     } catch (error) {
         // console.error("Error in humanizeText:", error);
         throw error;
@@ -218,7 +218,7 @@ function Api({
         setOriginalScore(checkResult.data);
 
         try {
-            let response = await humanizeFromScore(checkResult.data, chatGPTApiKey, GPTZeroApiKey);
+            let response = await humanizeFromScore(checkResult.data, chatGPTApiKey, GPTZeroApiKey, [], process.env.REACT_APP_OPENAI_API_KEY === chatGPTApiKey ? 5 : 10);
             setOutput(response.text);
             setText("");
             setZeroScore(response.score);
