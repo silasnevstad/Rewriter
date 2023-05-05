@@ -137,7 +137,9 @@ const humanizeFromScore = async (scoreData, chatApiKey, zeroApiKey, failedAttemp
       { role: "user", content: prompt },
     ];
     if (failedAttempts.length > 0) {
-      const attempts = sortBestFailedAttempts(failedAttempts).slice(0, 3);
+      const bestAttempt = sortBestFailedAttempts(failedAttempts)[0];
+      const worstAttempt = sortBestFailedAttempts(failedAttempts).slice(-1)[0];
+      const attempts = [bestAttempt, worstAttempt];
       messages.unshift(...attempts);
       messages.unshift({ role: "system", content: "These are the previous attempts to rewrite the text, each labeled with their AI-generated detection percentage. As you work on improving the text, please consider these earlier attempts and learn from their shortcomings. Your goal is to create a version with increased perplexity and burstiness that more closely resembles human writing while maintaining readability and avoiding rare words or complex sentence structures:" });
     }
