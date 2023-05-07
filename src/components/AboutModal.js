@@ -1,6 +1,6 @@
 import './styles/Modal.css';
 
-function Modal({ onClose }) {
+function AboutModal({ onClose }) {
     return (
         <div className="Modal">
             <div className="card">
@@ -28,4 +28,4 @@ function Modal({ onClose }) {
     );
 }
 
-export default Modal;
+export default AboutModal;

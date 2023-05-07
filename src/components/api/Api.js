@@ -21,7 +21,7 @@ const askGPT = async (model, messages, apiKey) => {
       });
       return response.data.choices[0].message.content;
     } catch (error) {
-    //   console.error("Error in askGPT:", error);
+      console.error("Error in askGPT:", error);
       throw error;
     }
 };
@@ -48,7 +48,7 @@ const askGPT = async (model, messages, apiKey) => {
   
       return { isHuman: false, data: responseData.documents[0] };
     } catch (error) {
-    //   console.error("Error in checkGPTZero:", error);
+      console.error("Error in checkGPTZero:", error);
       throw error;
     }
 };
@@ -167,7 +167,7 @@ const humanizeFromScore = async (scoreData, chatApiKey, zeroApiKey, failedAttemp
   
       return { text: cleanResponse, score: zeroResponse.data, human: humanMade };
     } catch (error) {
-    //   console.error("Error in humanizeFromScore:", error);
+      console.error("Error in humanizeFromScore:", error);
       throw error;
     }
 };
@@ -178,9 +178,9 @@ const humanizeText = async (text, chatApiKey, zeroApiKey) => {
         if (checkResult.isHuman) {
             return { text: text, score: checkResult.data, human: true};
         }
-        return humanizeFromScore(checkResult.data, chatApiKey, zeroApiKey, [], process.env.REACT_APP_OPENAI_API_KEY === chatGPTApiKey ? 5 : 10);
+        return humanizeFromScore(checkResult.data, chatApiKey, zeroApiKey, [], process.env.REACT_APP_OPENAI_API_KEY === chatApiKey ? 5 : 10);
     } catch (error) {
-        // console.error("Error in humanizeText:", error);
+        console.error("Error in humanizeText:", error);
         throw error;
     }
 };

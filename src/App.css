@@ -34,6 +34,21 @@ html {
 
 header {
   min-height: 12vh;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.App-header-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  margin-left: 1.8em;
+}
+
+.App-header-button:hover {
+  transform: scale(1.04);
 }
 
 .App-main {
@@ -46,22 +61,24 @@ header {
   /* max-height: 100vh; */
 }
 
+.App-footer {
+  position: absolute;
+  bottom: .1em;
+  width: 100%;
+  z-index: 100;
+}
+
+
+.App-footer-bottom {
+  position: relative;
+  margin-top: 3em;
+}
+
 @media (max-height: 800px) {
   .App-main {
     margin-top: 2em;
     gap: 2rem;
   }
-}
-
-.App-footer {
-  position: absolute;
-  bottom: .1em;
-  width: 100%;
-}
-
-.App-footer-bottom {
-  position: relative;
-  margin-top: 3em;
 }
 
 @media (max-width: 1200px) {

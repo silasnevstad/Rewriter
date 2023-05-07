@@ -5,7 +5,7 @@ function NoticeMessage() {
         <div className="NoticeMessage">
             <div className="NoticeMessage-content">
                 <p className="NoticeMessage-content-text">
-                    Our system is currently experiencing high demand. Thank you for your patience and understanding. 😊
+                    Apologies for the longer wait times, our system is experiencing high demand 😔 Thank you for your patience and understanding. 😊
                 </p>
             </div>
         </div>

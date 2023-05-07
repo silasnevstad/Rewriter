@@ -5,6 +5,7 @@ import Input from './components/Input';
 import TypeWriter from './components/TypeWriter';
 import ContactModal from './components/ContactModal'; 
 import AboutModal from './components/AboutModal';
+import AccountModal from './components/AccountModal';
 import Ouput from './components/Output';
 import AskOutput from './components/AskOutput';
 import ErrorMessage from './components/ErrorMessage';
@@ -16,6 +17,8 @@ import LoginModal from './components/LoginModal';
 import SignUpModal from './components/SignUpModal';
 import ApiKeyModal from './components/ApiKeyModal';
 import { getUserApiKey, signOut, auth, onAuthStateChanged  } from './components/api/firebase';
+
+import UserIcon from './components/images/user.svg';
 
 function App() {
   const [text, setText] = useState('');
@@ -31,6 +34,7 @@ function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignUpModal, setShowSignUpModal] = useState(false);
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
+  const [showAccountModal, setShowAccountModal] = useState(false);
   const [email, setEmail] = useState('');
   const [loggedIn, setLoggedIn] = useState(false);
   const [chatGPTApiKey, setChatApiKey] = useState("");
@@ -65,6 +69,10 @@ function App() {
     setShowApiKeyModal(!showApiKeyModal);
   };
 
+  const toggleAccountModal = () => {
+    setShowAccountModal(!showAccountModal);
+  };
+
   const toggleLoggedIn = async (email) => {
     setLoggedIn(!loggedIn);
     setEmail(email);
@@ -83,6 +91,8 @@ function App() {
     signOut();
     setLoggedIn(false);
     setApiKeySet(false);
+    setGuestMode(false);
+    setShowAccountModal(false);
     setChatApiKey(process.env.REACT_APP_OPENAI_API_KEY);
     setGPTZeroApiKey(process.env.REACT_APP_GPT_ZERO_API_KEY);
     setEmail('');
@@ -142,6 +152,10 @@ function App() {
       <div className="App-background"></div>
       <div className={`App ${loading ? 'App-loading' : ''}`}>
         <header className={`App-header ${loading ? 'App-header-loading' : ''}`}>
+          {loggedIn && !guestMode &&
+          <button className="App-header-button">
+            <img src={UserIcon} alt="User" onClick={() => toggleAccountModal()} />
+          </button>}
           <Title />
         </header>
 
@@ -156,7 +170,7 @@ function App() {
             </>
           ) : (
             
-              !checkingAuth && !apiKeySet ? (
+              !apiKeySet ? (
                 <ApiKeyModal onClose={() => setApiKeySet(true)} email={email} show={!apiKeySet} changeToGuestMode={changeToGuestMode} setChatApiKey={setChatApiKey} setGPTZeroApiKey={setGPTZeroApiKey} />
               ) : (
                 <main className={`App-main ${loading ? 'App-main-loading' : ''}`}>
@@ -181,6 +195,7 @@ function App() {
 
         {showContactModal && <ContactModal onClose={() => setShowContactModal(false)} />}
         {showAboutModal && <AboutModal onClose={() => setShowAboutModal(false)} />}
+        {showAccountModal && <AccountModal onClose={() => setShowAccountModal(false)} email={email} apiKey={chatGPTApiKey} signOut={signOutUser} toggleApiKeyModal={toggleApiKeyModal} />}
         <ApiKeyModal onClose={() => setShowApiKeyModal(false)} show={showApiKeyModal} email={email} changeToGuestMode={changeToGuestMode} setChatApiKey={setChatApiKey} setGPTZeroApiKey={setGPTZeroApiKey} />
         <SignUpModal onClose={toggleSignUpModal} show={showSignUpModal} toggleLoggedIn={toggleLoggedIn} />
 

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
+    <style>
+        circle, path {
+            fill: none;
+            stroke: white;
+            stroke-width: 2;
+        }
+
+        circle:hover, path:hover {
+            fill: none;
+            stroke: #FBC56C;
+            stroke-width: 2;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            circle, path {
+                fill: none;
+                stroke: black;
+                stroke-width: 2;
+            }
+        }
+    </style>
+    <path d="M40 42v-4a8 8 0 0 0-8-8H16a8 8 0 0 0-8 8v4"></path>
+    <circle cx="24" cy="14" r="8"></circle>
+</svg>

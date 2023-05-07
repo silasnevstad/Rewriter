@@ -54,11 +54,11 @@
 }
 
 .bottom-content {
-    margin-top: 3.5rem;
+    margin-top: 1.5rem;
 }
 
 .content {
-    text-align: center;
+    text-align: left;
 }
 
 .title {
@@ -84,7 +84,7 @@
     font-size: 1rem;
     padding: 0.5rem;
     border: 1px solid #ccc;
-    /* width: 25em; */
+    width: 25em;
     align-self: center;
     min-width: 20em;
     border-radius: 0.375rem;

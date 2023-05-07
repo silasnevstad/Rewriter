@@ -1,0 +1,56 @@
+.card {
+    width: 30vw;
+}
+
+.title {
+    text-align: left;
+    font-size: 2rem;
+}
+
+.account-info {
+    margin-bottom: 2em;
+}
+
+.account-info-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    opacity: 0.6;
+}
+
+.account-info-content {
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.account-buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: flex-end;
+    margin-top: 1em;
+    gap: 1em;
+}
+
+.account-button {
+    font-size: 1.2rem;
+    font-weight: 560;
+    color: #eee;
+    background-color: #5C86FF;
+    padding: .6em 1.2em;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    margin-top: 1em;
+}
+
+.account-button:hover {
+    background-color: #FBC56C;
+    color: #333;
+}
+
+@media (max-width: 1000px) {
+    .card {
+        width: 60%;
+    }
+    
+}
