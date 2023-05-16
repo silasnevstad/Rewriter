@@ -65,9 +65,9 @@ function ApiKeyModal({ onClose, email, show, changeToGuestMode, setChatApiKey, s
                                     <a type="submit" className="lower-anchors" href="https://platform.openai.com/account/api-keys" target="_blank">
                                         Get one here
                                     </a>
-                                    <button type="submit" className="lower-buttons" onClick={changeToGuestMode}>
+                                    {/* <button type="submit" className="lower-buttons" onClick={changeToGuestMode}>
                                         Use Shared API
-                                    </button>
+                                    </button> */}
                                 </div>
                             </form>
                         </div>
