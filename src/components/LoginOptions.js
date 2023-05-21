@@ -8,7 +8,7 @@ function LoginOptions({ onLogin, onSignUp, onGuest }) {
             <button className="LoginOptions-button" onClick={onLogin}>Login</button>
             <button className="LoginOptions-button" onClick={onSignUp}>Sign Up</button>
         </div>
-        <button className="LoginOptions-guest-button" onClick={onGuest}>Continue as Guest (Limited)</button>
+        {/* <button className="LoginOptions-guest-button" onClick={onGuest}>Continue as Guest (Limited)</button> */}
     </div>
   );
 }

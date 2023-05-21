@@ -79,24 +79,11 @@ function LoginModal({ onClose, show, toggleLoggedIn }) {
                                         'Login'
                                     )}
                                 </button>
-                                {/* <button type="submit" className="submit">
-                                    {loading ? (
-                                        <div className="spinner"></div>
-                                    ) : success ? (
-                                        'Sent!'
-                                    ) : (
-                                        'Send'
-                                    )}
-                                </button> */}
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
-            {/* Add your login modal HTML and form elements here */}
-            {/* Bind input fields with setEmail and setPassword */}
-            {/* Bind login and signup buttons with handleLogin and handleSignup */}
-            {/* Display the error message if it exists */}
         </div>
     );
 }
