@@ -2,7 +2,7 @@
     <style>
         circle, path {
             fill: none;
-            stroke: white;
+            stroke: black;
             stroke-width: 2;
         }
 
@@ -15,7 +15,7 @@
         @media (prefers-color-scheme: dark) {
             circle, path {
                 fill: none;
-                stroke: black;
+                stroke: white;
                 stroke-width: 2;
             }
         }
