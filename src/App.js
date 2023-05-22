@@ -84,6 +84,8 @@ function App() {
     if (apiKey !== null) {
       setApiKeySet(true);
       setChatApiKey(apiKey);
+    } else {
+      setApiKeySet(false);
     }
   };
 
@@ -121,7 +123,7 @@ function App() {
   
         // Get user API key
         const apiKey = await getUserApiKey(userEmail);
-        if (apiKey !== null) {
+        if (apiKey !== null && apiKey !== undefined) {
           setApiKeySet(true);
           setChatApiKey(apiKey);
         }
@@ -169,12 +171,10 @@ function App() {
               <SignUpModal onClose={toggleSignUpModal} show={showSignUpModal} toggleLoggedIn={toggleLoggedIn} />
             </>
           ) : (
-            
               !apiKeySet ? (
                 <ApiKeyModal onClose={() => setApiKeySet(true)} email={email} show={!apiKeySet} changeToGuestMode={changeToGuestMode} setChatApiKey={setChatApiKey} setGPTZeroApiKey={setGPTZeroApiKey} />
               ) : (
                 <main className={`App-main ${loading ? 'App-main-loading' : ''}`}>
-
                   <Input 
                     text={text} 
                     setText={setText} 
@@ -182,14 +182,12 @@ function App() {
                     handleAskButtonClick={handleAskButtonClick}
                     loading={loading}
                   />
-
-                  {error && <ErrorMessage onClose={() => setError(false)} />}
+                  {error && <ErrorMessage onClose={() => setError(false)} apiKey={chatGPTApiKey} />}
                   {!error && !output && !askOutput && <NoticeMessage />}
                   {!error && output && !loading && <Ouput output={output} score={zeroScore} originalScore={originalScore} originalText={originalText} />}
                   {!error && askOutput && !loading && <AskOutput output={askOutput} score={zeroScore} />}
                 </main>
               )
-            
           )
         }
 

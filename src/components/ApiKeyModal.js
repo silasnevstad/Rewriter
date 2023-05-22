@@ -9,17 +9,17 @@ function ApiKeyModal({ onClose, email, show, changeToGuestMode, setChatApiKey, s
     const [loading, setLoading] = useState(false);
     const modalRef = useRef(null);
 
-    useEffect(() => {
-        const handleClickOutside = (e) => {
-            if (modalRef.current && modalRef.current === e.target) {
-                onClose();
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, [modalRef]);
+    // useEffect(() => {
+    //     const handleClickOutside = (e) => {
+    //         if (modalRef.current && modalRef.current === e.target) {
+    //             onClose();
+    //         }
+    //     };
+    //     document.addEventListener('mousedown', handleClickOutside);
+    //     return () => {
+    //         document.removeEventListener('mousedown', handleClickOutside);
+    //     };
+    // }, [modalRef]);
 
     if (!show) {
         return null;
@@ -71,7 +71,7 @@ function ApiKeyModal({ onClose, email, show, changeToGuestMode, setChatApiKey, s
                                 </div>
                             </form>
                         </div>
-                        <p className="api-modal-info" style={{ color: '#aaa', marginTop: '2em', fontSize: '1em' }}> Make sure you have GPT-4 otherwise might not work. 👎 </p>
+                        <p className="api-modal-info" style={{ color: '#aaa', marginTop: '2em', fontSize: '1em' }}> Make sure you have GPT-4 otherwise might not work.</p>
                     </div>
                 </div>
             </div>
