@@ -78,6 +78,7 @@ function App() {
     setEmail(email);
     setShowLoginModal(false);
     setShowSignUpModal(false);
+    setApiKeySet(false);
 
     // get user api key
     const apiKey = await getUserApiKey(email);
