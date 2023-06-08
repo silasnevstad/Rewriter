@@ -1,6 +1,6 @@
 .Summary {
     position: relative;
-    padding: 1.2rem 2rem;
+    padding: 1rem 1rem;
     border: 1px solid #bbb;
     border-radius: 10px;
     border: 1px solid #aaa;
@@ -12,7 +12,8 @@
     font-size: 1.4rem;
     color: #4e4e4e;
     font-family: 'Open Sans', sans-serif;
-    font-weight: 600;
+    font-size: 1.5rem;
+    font-weight: 500;
     text-align: left;
 }
 

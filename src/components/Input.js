@@ -2,7 +2,7 @@ import React from 'react';
 import './styles/Input.css';
 
 function Input({ text, setText, handleButtonClick, handleAskButtonClick, loading }) {
-    const placeholder = 'Type text you want to rewrite here';
+    const placeholder = 'Type here';
     // const placeholders = [
     //     'Type text you want to rewrite here',
     //     'Write a 300 words about Napoleon',
@@ -41,10 +41,10 @@ function Input({ text, setText, handleButtonClick, handleAskButtonClick, loading
                 </div>
             </div>
             <div className="Input-button-container">
-                <button onClick={handleAskButtonClick} disabled={loading} className="Input-button-blue">
+                <button onClick={handleAskButtonClick} disabled={loading} >
                     Ask
                 </button>
-                <button onClick={handleClick} disabled={loading} className="Input-button-blue">
+                <button onClick={handleClick} disabled={loading}>
                     Rewrite
                 </button>
             </div>

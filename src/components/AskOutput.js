@@ -16,11 +16,11 @@ function AskOutput ({ output, score }) {
             <div className="Output-notice">
                 {getOverallProb(score) < 10 ? (
                     <p className="Output-notice-text">
-                       👍 This is detected as <span className="Output-notice-text-bold">human</span>-generated text.
+                        This is detected as <span className="Output-notice-text-bold">'human'</span> generated
                     </p>
                 ) : (
                     <p className="Output-notice-text">
-                        This is detected as <span className="Output-notice-text-bold">AI</span>-generated generated.
+                        This is detected as <span className="Output-notice-text-bold">'AI'</span> generated
                     </p>
                 )}
             </div>

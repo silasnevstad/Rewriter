@@ -9,15 +9,15 @@
     justify-content: space-between;
     width: 100%;
     margin-bottom: 2rem;
+    margin-top: 2rem;
 }
 
 .Output-row-left {
-    width: 65%;
+    width: 100%;
 }
 
 .Output-row-right {
-    /* width: 100%; */
-    margin-left: 2rem;
+    /* margin-left: -4rem; */
 }
 
 .Output-container {
@@ -28,7 +28,8 @@
 }
 
 .Output-scroll {
-    margin-bottom: 3rem;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
 }
 
 .Output-notice p {
@@ -37,6 +38,11 @@
     color: #333;
     margin-top: -.1rem;
     /* margin-bottom: 0rem; */
+}
+
+.Output-notice-text-bold {
+    font-weight: 700;
+    color: #5c86ff;
 }
 
 .Output-scroll p {
@@ -70,7 +76,13 @@
     .Output-row-left {
         width: 100%;
     }
-    
+
+}
+
+@media (max-width: 1400px) {    
+    .Output-row-right {
+        margin-left: 2rem;
+    }
 }
 
 @media screen and (prefers-color-scheme: dark) {

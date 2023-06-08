@@ -9,7 +9,7 @@ import AccountModal from './components/AccountModal';
 import Ouput from './components/Output';
 import AskOutput from './components/AskOutput';
 import ErrorMessage from './components/ErrorMessage';
-import NoticeMessage from './components/NoticeMessage';
+// import NoticeMessage from './components/NoticeMessage';
 import Footer from './components/Footer';
 import Api from './components/api/Api';
 import LoginOptions from './components/LoginOptions';
@@ -184,7 +184,7 @@ function App() {
                     loading={loading}
                   />
                   {error && <ErrorMessage onClose={() => setError(false)} apiKey={chatGPTApiKey} />}
-                  {!error && !output && !askOutput && <NoticeMessage />}
+                  {/* {!error && !output && !askOutput && <NoticeMessage />} */}
                   {!error && output && !loading && <Ouput output={output} score={zeroScore} originalScore={originalScore} originalText={originalText} />}
                   {!error && askOutput && !loading && <AskOutput output={askOutput} score={zeroScore} />}
                 </main>
