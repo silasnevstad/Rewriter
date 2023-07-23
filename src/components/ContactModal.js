@@ -44,7 +44,7 @@ function Modal({ onClose }) {
                     <div className="content">
                         <span className="title">Contact <span className='title-span'>Us</span></span>
                         <div className="bottom-content">
-                            <form onSubmit={handleSubmit}>
+                             <form onSubmit={handleSubmit} className="form">
                                 <div className="form-group">
                                     {/* <label htmlFor="name">Name:</label> */}
                                     <input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" />

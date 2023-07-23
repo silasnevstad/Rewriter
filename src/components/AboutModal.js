@@ -13,10 +13,8 @@ function AboutModal({ onClose }) {
                     </div>
                 </div>
                 <div className="bottom-content">
-                    <p> Welcome to my text-rewriting platform! This service is motivated by a desire to make text more human-like. </p>
-                    <p> While making this I was committed to maintaining readability and clarity so the algorithms prioritize preserving the original intent of your text while making it undetectable by AI systems. </p>
-                    <p> I believe in the power of technology to enhance and enrich human communication, and this platform is designed with this goal in mind. </p>
-                    <p> Thank you for choosing my service, and I look forward to helping you create text that truly sounds human-generated! </p>
+                    <p> Welcome to this text-rewriting platform! This service is motivated by a desire to make text more human-like. </p>
+                    <p> While making this, the focus was on maintaining readability and clarity so the algorithms prioritize preserving the original intent of your text while making it undetectable by AI systems. </p>
                 </div>
             </div>
         </div>
